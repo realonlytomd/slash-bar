@@ -1,7 +1,7 @@
 {
   "name": "simple-item",
   "version": "1.0.0",
-  "description": "Generic site to show off artist's item.",
+  "description": "Site to show off family's pictures and notes.",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/realonlytomd/template-main.git"
+    "url": "git+https://github.com/realonlytomd/slash-bar.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/realonlytomd/template-main/issues"
+    "url": "https://github.com/realonlytomd/slash-bar/issues"
   },
-  "homepage": "https://github.com/realonlytomd/template-main#readme",
+  "homepage": "https://github.com/realonlytomd/slash-bar#readme",
   "keywords": [],
   "dependencies": {
     "array-rearrange": "^2.2.2",

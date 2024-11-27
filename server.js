@@ -32,9 +32,9 @@ mongoose.Promise = Promise;
     if (process.env.DB_URI) {
       mongoose.connect(process.env.DB_URI);
     } else {
-      mongoose.connect("mongodb://localhost:27017/simpleitems")
+      mongoose.connect("mongodb://localhost:27017/slashbar")
         .then((res) => {
-        console.log("mongoose connection is successful on: " + "mongodb://localhost:27017/simpleitems");
+        console.log("mongoose connection is successful on: " + "mongodb://localhost:27017/slashbar");
       }).catch(error => {
         console.log("I am gettting an error", error);
       });
