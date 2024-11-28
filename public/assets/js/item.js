@@ -95,10 +95,10 @@ jQuery(document).ready(function( $ ){
         $.getJSON("/getAllItems", function(items) {
             console.log("items array, from getAllData function", items);
             console.log("items.length: ", items.length);
-            // if (items.length === 0) {  //I think I put this here before there were any items in db
-            //     console.log("waitOnPower is being called");
-            //     waitOnPower();
-            // }
+            if (items.length === 0) {  //I put this here before there were any items in db
+                console.log("waitOnPower is being called");
+                waitOnPower();
+            }
             for (i=0; i<items.length; i++) {
                 allItemIds.push (items[i]._id);
                 allItemNameswithImages.push(items[i].name);
