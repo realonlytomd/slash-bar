@@ -141,7 +141,7 @@ jQuery(document).ready(function( $ ){
                         console.log("allItemNameswithImages.length: ", allItemNameswithImages.length);
                         if (wrongOrderIds.length === allItemNameswithImages.length) {
                             console.log("wrongOrder.length = allItemNameswithImages.length");
-                            setTimeout(waitOnPower, 3000);  //this adds a number of seconds to wait on the power button, not needed
+                            setTimeout(waitOnPower, 500);  //this adds a number of seconds to wait on the power button, not needed
                         }
                     });
                 }
