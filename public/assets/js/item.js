@@ -45,7 +45,7 @@ jQuery(document).ready(function( $ ){
         $("#itemWaiting").hide();
         // change background to blue items
         $("body").css({
-            'background-image' : 'url("/assets/pictures/softfocus.png")',
+            'background-image' : 'url("/assets/pictures/fadeRanch.jpg")',
             'background-size' : 'cover'
             //'background-position' : 'center top'
         });
@@ -200,7 +200,7 @@ jQuery(document).ready(function( $ ){
         }
         // change backgroud of body
         $("body").css({
-            'background-image' : 'url("/assets/pictures/softfocus.png")',
+            'background-image' : 'url("/assets/pictures/fadeRanch.jpg")',
             'background-size' : 'cover'
           });
         //first sort to get the order of items to match Mark's preferred order        
