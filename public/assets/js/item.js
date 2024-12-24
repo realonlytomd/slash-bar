@@ -24,7 +24,8 @@ jQuery(document).ready(function( $ ){
     var sourceAllItemIds = [];
     var sourceAllItemNameswithImages = [];
     var sourceAllItemBios = [];
-    var sourceAllItemImagesIds = [];
+    var sourceAllItemImageIds = [];
+    var sourceNumberOfImages = [];
     // variables for editing data
     var thisImageId; //data-id of image
 
@@ -42,17 +43,17 @@ jQuery(document).ready(function( $ ){
     // This should be visible to all users.
     
     function waitOnPower() {
-        $("#itemWaiting").hide();
         // change background to blue items
-        $("body").css({
-            'background-image' : 'url("/assets/pictures/fadeRanch.jpg")',
-            'background-size' : 'cover'
-            //'background-position' : 'center top'
-        });
-        var power = $("<img>");
-        power.attr("src","assets/pictures/greenstart.jpg" );
-        power.attr("id","revealItems");
-        $("#powerOnGoes").append(power);
+        // $("body").css({
+        //     'background-image' : 'url("/assets/pictures/fadeRanch.jpg")',
+        //     'background-size' : 'cover'
+        //     //'background-position' : 'center top'
+        // });
+        // var power = $("<img>");
+        // power.attr("src","assets/pictures/greenstart.jpg" );
+        // power.attr("id","revealItems");
+        // $("#powerOnGoes").append(power);
+        revealItems();
     }
 
     function getAllData() {
@@ -95,7 +96,7 @@ jQuery(document).ready(function( $ ){
         $.getJSON("/getAllItems", function(items) {
             console.log("items array, from getAllData function", items);
             console.log("items.length: ", items.length);
-            if (items.length === 0) {  //I put this here before there were any items in db
+            if (items.length === 0) {  //I put this here for when there aren't any items in db yet
                 console.log("waitOnPower is being called");
                 waitOnPower();
             }
@@ -141,7 +142,8 @@ jQuery(document).ready(function( $ ){
                         console.log("allItemNameswithImages.length: ", allItemNameswithImages.length);
                         if (wrongOrderIds.length === allItemNameswithImages.length) {
                             console.log("wrongOrder.length = allItemNameswithImages.length");
-                            setTimeout(waitOnPower, 500);  //this adds a number of seconds to wait on the power button, not needed
+                            //setTimeout(waitOnPower, 500);  //this adds a number of seconds to wait on the power button, not needed
+                            revealItems();
                         }
                     });
                 }
@@ -185,8 +187,10 @@ jQuery(document).ready(function( $ ){
     });
 
     // function to show the items from the database, sorted to match names with images
-    $(document).on("click", "#revealItems", function(event) {
-        event.preventDefault();
+    //$(document).on("click", "#revealItems", function(event) {
+    function revealItems() {
+        //event.preventDefault();
+        $("#itemWaiting").hide();
         $("#currentItems").show();
         $("#itemHeader").show();
         $("#revealItems").remove();
@@ -316,8 +320,8 @@ jQuery(document).ready(function( $ ){
         for (let i=0; i<itemIconArray.length; i++) {
             $(`#currentItems`).append(itemIconArray[i]);
         }
-
-    });
+    //});
+    }
     //clicking on the picture of all the items displayed brings up a large pic and info about that item
     // adding the display of additional pictures
     
