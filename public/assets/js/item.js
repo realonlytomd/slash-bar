@@ -489,6 +489,8 @@ jQuery(document).ready(function( $ ){
 
     // when Additional Images button (#showAdditionalImages) is clicked
     // go to db and retrieve addtional images from the correct item and display the small versions in a div
+    //
+    // here I think I'll explore changing to get the additional pics, but display them in a horizontal scrolling div.
     $(document).on("click", "#showAdditionalImages", function(event) {
         event.preventDefault();
         // hide the addtl images button
