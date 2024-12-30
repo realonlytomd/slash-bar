@@ -164,7 +164,7 @@ jQuery(document).ready(function( $ ){
         event.preventDefault();
         var password = $("#enterPass").val().trim();
         console.log("password: " + password);
-        if (password === "marsha") {
+        if (password === "sybil") {
             console.log("password is correct!");
             personLoggedIn = true;
             console.log("personLoggedIn: " + personLoggedIn);
@@ -524,7 +524,7 @@ jQuery(document).ready(function( $ ){
         });
     });
 
-    // click on one of the additional images icons, and display the large verion alone with it's title and description
+    // click on one of the additional images icons, and display the large version alone with it's title and description
     $(document).on("click", "#addtlImg", function(event) {
         event.preventDefault();
         console.log("I clicked on an additional image");
@@ -683,6 +683,7 @@ jQuery(document).ready(function( $ ){
     // this function happens when Mark clicks the submit a new item button, info is stored in the appropriate item db
     $(document).on("click", "#submitNewItem", function(event) {
         event.preventDefault();
+        console.log("is the number of items available? itemIconArray.length: ", itemIconArray.length);
         console.log("name: ", $("#itemNameInput").val().trim());
         console.log("bio: ", $("#itemBioInput").val().trim());
         var name = $("#itemNameInput").val().trim();
@@ -692,7 +693,8 @@ jQuery(document).ready(function( $ ){
             bio = "Biography";
         }
         if (order === "") {
-            order = "3000";
+            order = String((itemIconArray.length + 1) * 10);
+            console.log("assigned order from code not user order: ", order); // need to change this instead of them all being assigned 3000
         }
         $.ajax({
             method: "GET",
