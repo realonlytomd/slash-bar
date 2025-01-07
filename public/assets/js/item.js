@@ -109,8 +109,8 @@ jQuery(document).ready(function( $ ){
                 //this is a list of all the items without a main image
                 if (typeof items[i].image[0] === "undefined") { //need to remove the names without an image
                     // The following should be written to the DOM ONLY when Mark is in edit mode
-                    $("#currentItems").append("<div class=itemTitles><h4>" + items[i].name + 
-                    "</h4><br><h5 class=noImage data-itemid=" + items[i]._id + " data-toggle='modal' data-target='#newItemImageModal'>No Image</h5></div>");
+                    $("#currentItems").append("<div class='itemTitles'><h4>" + items[i].name + 
+                    "</h4><br><h5 class='noImage' data-itemid=" + items[i]._id + " data-toggle='modal' data-target='#newItemImageModal'>No Image</h5></div>");
                     //remove THIS item from allItemNameswithImages array
                     allItemIds.pop();  //need to be sorted like allItemOrder
                     allItemNameswithImages.pop(); //need to be sorted like allItemOrder
@@ -509,15 +509,25 @@ jQuery(document).ready(function( $ ){
                     url: "/getImages/" + innerItem
                     })
                     .then(function(dataGetImages) { // dataGetImages should be formattedImages from api-routes.js
+                        console.log("dataGetImages: ", dataGetImages);
                         $("#additionalImages").append(dataGetImages);
                         // change the id from itemImg to addtlImg. It was itemImg from db retrieval in the api-routes file.
+                        $("div#additionalImages img").attr("class", "addtlBigItemImage");
                         $("div#additionalImages img").attr("id", "addtlImg");
                         // can I just add the attribute for the currentItemId here?
                         console.log("inside innerImageForEach large addtl images creation, currentItemId: " + currentItemId);
                         $("div#additionalImages img").attr("data-itemid", currentItemId);
                         // add the onclick event to scroll to the large additional images div below
-                        $("div#additionalImages img").attr("onclick", "location.href='#largeAddtlImages'");
-                        $("div#additionalImages img").attr("target", "_self");
+                        // commented out since the horizontal scroll div put in
+                        // $("div#additionalImages img").attr("onclick", "location.href='#largeAddtlImages'");
+                        // $("div#additionalImages img").attr("target", "_self");
+                        // each picture needs the title and desc below it but still in the div #additionalImages
+                        // title
+                        console.log("can I retrieve dataGetImages.img.title? title: ", dataGetImages.img.title);
+                        //$("#additionalImages").append();
+                        // desc
+                        console.log("can I retrieve desc? dataGetImages.img.data-desc: ", dataGetImages.img.data-desc);
+                        //$("#additionalImages").append();
                     });
                 }
             }
