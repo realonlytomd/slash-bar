@@ -490,7 +490,7 @@ jQuery(document).ready(function( $ ){
     // when Additional Images button (#showAdditionalImages) is clicked
     // go to db and retrieve addtional images from the correct item and display the small versions in a div
     //
-    // here I think I'll explore changing to get the additional pics, but display them in a horizontal scrolling div.
+    // Instead of a small icon, put the additional images in a horizontally scrolling div of large images.
     $(document).on("click", "#showAdditionalImages", function(event) {
         event.preventDefault();
         // hide the addtl images button
@@ -515,7 +515,7 @@ jQuery(document).ready(function( $ ){
                         // can I just add the attribute for the currentItemId here?
                         console.log("inside innerImageForEach large addtl images creation, currentItemId: " + currentItemId);
                         $("div#additionalImages img").attr("data-itemid", currentItemId);
-                        // add the onclick event to go to the large additional images div below
+                        // add the onclick event to scroll to the large additional images div below
                         $("div#additionalImages img").attr("onclick", "location.href='#largeAddtlImages'");
                         $("div#additionalImages img").attr("target", "_self");
                     });
@@ -533,12 +533,12 @@ jQuery(document).ready(function( $ ){
         // loads the additional image that was just clicked, as wide as the screen
         var thisDataId = $(this).data("id");
         var thisItemId = $(this).data("itemid");  // or, is it .attr("data-itemid")?
-        console.log("image data-id of the clicked pic (id of the image): ", thisDataId);
-        console.log("item data-id of the clicked pic (id of the item): ", thisItemId);
+        console.log("image data-id of the clicked pic (dataid of the image): ", thisDataId);
+        console.log("item data-id of the clicked pic (dataid of the item): ", thisItemId);
         var imgSrc = $(this).attr("src");
         var bigImage = $("<img>");
         bigImage.addClass("addtlBigItemImage");
-        bigImage.data("id", thisDataId);
+        bigImage.attr("data-id", thisDataId);
         bigImage.attr("src", imgSrc);
         $("#largeAddtlImages").append(bigImage);
         if (personLoggedIn === true) {
@@ -598,7 +598,7 @@ jQuery(document).ready(function( $ ){
     });
 
     // If Mark clicks the Delete this Image button on an additional Large Image, this function happens
-    // the image is deleted, and it's assoicated Title and Description are removed,
+    // the image is deleted, and it's associated Title and Description are removed,
     // along with the id number in the item db
     $(document).on("click", "#deleteImage", function(event) {
         event.preventDefault();
