@@ -523,10 +523,10 @@ jQuery(document).ready(function( $ ){
                         // $("div#additionalImages img").attr("target", "_self");
                         // each picture needs the title and desc below it but still in the div #additionalImages
                         // title
-                        console.log("can I retrieve dataGetImages.img.title? title: ", dataGetImages.img.title);
+                        console.log("can I retrieve dataGetImages.img.title? title: ", dataGetImages.img.attr("title"));
                         //$("#additionalImages").append();
                         // desc
-                        console.log("can I retrieve desc? dataGetImages.img.data-desc: ", dataGetImages.img.data-desc);
+                        console.log("can I retrieve desc? dataGetImages.img.data-desc: ", dataGetImages.img.data("desc"));
                         //$("#additionalImages").append();
                     });
                 }
