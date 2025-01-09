@@ -509,7 +509,7 @@ jQuery(document).ready(function( $ ){
                     url: "/getImages/" + innerItem
                     })
                     .then(function(dataGetImages) { // dataGetImages should be formattedImages from api-routes.js
-                        console.log("dataGetImages: ", dataGetImages);
+                        console.log("dataGetImages: ", dataGetImages); //try to get specific info
                         $("#additionalImages").append(dataGetImages);
                         // change the id from itemImg to addtlImg. It was itemImg from db retrieval in the api-routes file.
                         $("div#additionalImages img").attr("class", "addtlBigItemImage");
