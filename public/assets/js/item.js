@@ -509,8 +509,12 @@ jQuery(document).ready(function( $ ){
                     url: "/getImages/" + innerItem
                     })
                     .then(function(dataGetImages) { // dataGetImages should be formattedImages from api-routes.js
-                        console.log("dataGetImages: ", dataGetImages); //try to get specific info
+                        console.log("dataGetImages: ", dataGetImages);
+                        console.log("dataGetImages[0]: ", dataGetImages[0]); //( x.getAttribute('data-image') )
+                        //console.log("dataGetImages[0].title: ", dataGetImages[0].title); //try to get specific info
                         $("#additionalImages").append(dataGetImages);
+                        var thisTitle = $("#additionalImages img").attr("title");
+                        console.log("thisTitle: ", thisTitle);
                         // change the id from itemImg to addtlImg. It was itemImg from db retrieval in the api-routes file.
                         $("div#additionalImages img").attr("class", "addtlBigItemImage");
                         $("div#additionalImages img").attr("id", "addtlImg");
@@ -523,10 +527,10 @@ jQuery(document).ready(function( $ ){
                         // $("div#additionalImages img").attr("target", "_self");
                         // each picture needs the title and desc below it but still in the div #additionalImages
                         // title
-                        console.log("can I retrieve dataGetImages.img.title? title: ", dataGetImages.img.attr("title"));
+                        //console.log("can I retrieve dataGetImages.img.title? title: ", dataGetImages.img.attr("title"));
                         //$("#additionalImages").append();
                         // desc
-                        console.log("can I retrieve desc? dataGetImages.img.data-desc: ", dataGetImages.img.data("desc"));
+                        //console.log("can I retrieve desc? dataGetImages.img.data-desc: ", dataGetImages.img.data("desc"));
                         //$("#additionalImages").append();
                     });
                 }
