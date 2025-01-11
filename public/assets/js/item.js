@@ -28,6 +28,8 @@ jQuery(document).ready(function( $ ){
     var sourceNumberOfImages = [];
     // variables for editing data
     var thisImageId; //data-id of image
+    var horTitle = "notyet";
+    var horDesc = "notyet";
 
     // code to bring up Mark's biography modal
     $(document).on("click", "#personsBioPoint", function(event) {
@@ -510,17 +512,38 @@ jQuery(document).ready(function( $ ){
                     })
                     .then(function(dataGetImages) { // dataGetImages should be formattedImages from api-routes.js
                         console.log("dataGetImages: ", dataGetImages);
-                        console.log("dataGetImages[0]: ", dataGetImages[0]); //( x.getAttribute('data-image') )
                         //console.log("dataGetImages[0].title: ", dataGetImages[0].title); //try to get specific info
                         $("#additionalImages").append(dataGetImages);
-                        var thisTitle = $("#additionalImages img").attr("title");
-                        console.log("thisTitle: ", thisTitle);
                         // change the id from itemImg to addtlImg. It was itemImg from db retrieval in the api-routes file.
                         $("div#additionalImages img").attr("class", "addtlBigItemImage");
                         $("div#additionalImages img").attr("id", "addtlImg");
                         // can I just add the attribute for the currentItemId here?
                         console.log("inside innerImageForEach large addtl images creation, currentItemId: " + currentItemId);
                         $("div#additionalImages img").attr("data-itemid", currentItemId);
+                        // put the title of this picture underneath
+                        var justH3 = $("<h3>");
+                        var specificItemPicTitle = $("<span>");
+                        specificItemPicTitle.addClass("lightText");
+                        specificItemPicTitle.attr("id", "imageTitleEdit");
+                        //specificItemPicTitle.attr("data-id", thisDataId);
+                        console.log("horTitle before: ", horTitle);
+                        var horTitle = $("#additionalImages img").attr("title");
+                        console.log("horTitle after: ", horTitle);
+                        specificItemPicTitle.text(horTitle);
+                        if (personLoggedIn === true) {
+                            specificItemPicTitle.css({
+                                'border-style': 'solid',
+                                'border-width': '4px',
+                                'border-color': 'red'
+                            });
+                        } else {
+                            if (title === "Title" || title === "None") {
+                                specificItemPicTitle.text("");
+                                specificItemPicTitle.removeClass("lightText");
+                            }
+                        }
+                        justH3.append(specificItemPicTitle);
+                        $("#additionalImages").append(justH3);
                         // add the onclick event to scroll to the large additional images div below
                         // commented out since the horizontal scroll div put in
                         // $("div#additionalImages img").attr("onclick", "location.href='#largeAddtlImages'");
