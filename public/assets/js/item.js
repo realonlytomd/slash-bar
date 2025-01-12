@@ -490,9 +490,8 @@ jQuery(document).ready(function( $ ){
     });
 
     // when Additional Images button (#showAdditionalImages) is clicked
-    // go to db and retrieve addtional images from the correct item and display the small versions in a div
-    //
-    // Instead of a small icon, put the additional images in a horizontally scrolling div of large images.
+    // go to db and retrieve addtional images from the correct item (slash bar picture group) and display 
+    // the additional images in a horizontally scrolling div of large images.
     $(document).on("click", "#showAdditionalImages", function(event) {
         event.preventDefault();
         // hide the addtl images button
@@ -520,66 +519,38 @@ jQuery(document).ready(function( $ ){
                         // can I just add the attribute for the currentItemId here?
                         console.log("inside innerImageForEach large addtl images creation, currentItemId: " + currentItemId);
                         $("div#additionalImages img").attr("data-itemid", currentItemId);
-                        // put the title of this picture underneath
-                        var justH3 = $("<h3>");
-                        var specificItemPicTitle = $("<span>");
-                        specificItemPicTitle.addClass("lightText");
-                        specificItemPicTitle.attr("id", "imageTitleEdit");
-                        //specificItemPicTitle.attr("data-id", thisDataId);
-                        console.log("horTitle before: ", horTitle);
-                        var horTitle = $("#additionalImages img").attr("title");
-                        console.log("horTitle after: ", horTitle);
-                        specificItemPicTitle.text(horTitle);
-                        if (personLoggedIn === true) {
-                            specificItemPicTitle.css({
-                                'border-style': 'solid',
-                                'border-width': '4px',
-                                'border-color': 'red'
-                            });
-                        } else {
-                            if (title === "Title" || title === "None") {
-                                specificItemPicTitle.text("");
-                                specificItemPicTitle.removeClass("lightText");
-                            }
-                        }
-                        justH3.append(specificItemPicTitle);
-                        $("#additionalImages").append(justH3);
+                        // put the title of this picture underneath with a mouseover.
+                        
                         // add the onclick event to scroll to the large additional images div below
                         // commented out since the horizontal scroll div put in
                         // $("div#additionalImages img").attr("onclick", "location.href='#largeAddtlImages'");
                         // $("div#additionalImages img").attr("target", "_self");
                         // each picture needs the title and desc below it but still in the div #additionalImages
-                        // title
-                        //console.log("can I retrieve dataGetImages.img.title? title: ", dataGetImages.img.attr("title"));
-                        //$("#additionalImages").append();
-                        // desc
-                        //console.log("can I retrieve desc? dataGetImages.img.data-desc: ", dataGetImages.img.data("desc"));
-                        //$("#additionalImages").append();
                     });
                 }
             }
         });
     });
 
-    // click on one of the additional images icons, and display the large version alone with it's title and description
-    $(document).on("click", "#addtlImg", function(event) {
+    // mouseover on one of the additional images, and display it's title and description
+    $(document).on("click", "img#addtlImg", function(event) {  // or is it hover? mouseenter? add onmouseleave below
         event.preventDefault();
         console.log("I clicked on an additional image");
-        $("#largeAddtlImages").empty();
+        //$("#largeAddtlImages").empty();
         
         // loads the additional image that was just clicked, as wide as the screen
         var thisDataId = $(this).data("id");
         var thisItemId = $(this).data("itemid");  // or, is it .attr("data-itemid")?
         console.log("image data-id of the clicked pic (dataid of the image): ", thisDataId);
         console.log("item data-id of the clicked pic (dataid of the item): ", thisItemId);
-        var imgSrc = $(this).attr("src");
-        var bigImage = $("<img>");
-        bigImage.addClass("addtlBigItemImage");
-        bigImage.attr("data-id", thisDataId);
-        bigImage.attr("src", imgSrc);
-        $("#largeAddtlImages").append(bigImage);
+        // var imgSrc = $(this).attr("src");
+        // var bigImage = $("<img>");
+        // bigImage.addClass("addtlBigItemImage");
+        // bigImage.attr("data-id", thisDataId);
+        // bigImage.attr("src", imgSrc);
+        // $("#largeAddtlImages").append(bigImage);
         if (personLoggedIn === true) {
-            $("#largeAddtlImages").append(`<br><button type="button" class="btn btn-danger"` +
+            $("div#additionalImages img").append(`<br><button type="button" class="btn btn-danger"` +
             ` id="deleteImage" data-itemid="` + thisItemId + `" data-id="`+ thisDataId +`">Delete This Image</button>`);
         }
 
@@ -606,8 +577,9 @@ jQuery(document).ready(function( $ ){
             }
         }
         justH3.append(specificItemPicTitle);
-        $("#largeAddtlImages").append(justH3);
-
+        $(this).append(justH3);
+        
+        
         // put the desc of this picture underneath that
         var justH3 = $("<h3>");
         var specificItemPicDesc = $("<span>");
@@ -631,7 +603,7 @@ jQuery(document).ready(function( $ ){
                 }
             }
         justH3.append(specificItemPicDesc);   
-        $("#largeAddtlImages").append(justH3);
+        $(this).append(justH3);
     });
 
     // If Mark clicks the Delete this Image button on an additional Large Image, this function happens
