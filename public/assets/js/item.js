@@ -550,7 +550,7 @@ jQuery(document).ready(function( $ ){
         // bigImage.attr("src", imgSrc);
         // $("#largeAddtlImages").append(bigImage);
         if (personLoggedIn === true) {
-            $("div#additionalImages img").append(`<br><button type="button" class="btn btn-danger"` +
+            $(this).append(`<br><button type="button" class="btn btn-danger"` +
             ` id="deleteImage" data-itemid="` + thisItemId + `" data-id="`+ thisDataId +`">Delete This Image</button>`);
         }
 

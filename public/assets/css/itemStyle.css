@@ -110,8 +110,8 @@ button, input#editTitle {
 
 .lightText {
     color: white;
-    /*display: inline-block;  
-    background-color: rgb(201, 231, 237);
+    display: block;  
+    /*background-color: rgb(201, 231, 237);
     padding-left: 4px;
     padding-right: 4px;
     padding-top: 3px;*/
@@ -159,8 +159,8 @@ button, input#editTitle {
 }
 
 #addtlImg {
-    margin-right: 36px;
-    margin-bottom: 36px;
+    /*margin-right: 36px;
+    margin-bottom: 36px;*/
 }
 
 .bigItemImage {
@@ -170,18 +170,20 @@ button, input#editTitle {
 #additionalImages {
     margin-top: 30px;
     background-color: #333;
-    overflow: auto;
-    white-space: nowrap;
+    /*overflow: auto;
+    white-space: nowrap;*/
     padding: 10px;
 }
 
 #largeAddtlImages {
     margin-top: 30px;
+
 }
 
 .addtlBigItemImage {
     width: 90%;
     padding: 10px;
+    overflow: visible;
 }
 
 #deleteImage {
