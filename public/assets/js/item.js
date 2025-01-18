@@ -532,6 +532,15 @@ jQuery(document).ready(function( $ ){
         });
     });
 
+    <div id="img#addtlImg" onmousemove="addLabels(event)" onmouseout="clearLabels()"></div>
+
+    //Add a function for just when in edit mode, add delete button, title and desc to all the images
+    // the add title and desc labels are their own functions so don't write them twice (for in edit mode or not)
+
+    // then the onmousemove function just addes labels on mouse move but not in edit mode
+
+    //  write the onmouseout function to clear the added labels
+
     // mouseover on one of the additional images, and display it's title and description
     $(document).on("click", "img#addtlImg", function(event) {  // or is it hover? mouseenter? add onmouseleave below
         event.preventDefault();
@@ -549,61 +558,65 @@ jQuery(document).ready(function( $ ){
         // bigImage.attr("data-id", thisDataId);
         // bigImage.attr("src", imgSrc);
         // $("#largeAddtlImages").append(bigImage);
+        // this needs to be like adding title and desc and use insertAfter
         if (personLoggedIn === true) {
             $(this).append(`<br><button type="button" class="btn btn-danger"` +
             ` id="deleteImage" data-itemid="` + thisItemId + `" data-id="`+ thisDataId +`">Delete This Image</button>`);
         }
 
-        // put the title of this picture underneath
-        var justH3 = $("<h3>");
-        var specificItemPicTitle = $("<span>");
-        specificItemPicTitle.addClass("lightText");
-        specificItemPicTitle.attr("id", "imageTitleEdit");
-        specificItemPicTitle.attr("data-id", thisDataId);
-        console.log("title before: ", title);
-        var title = $(this).attr("title");
-        console.log("title after: ", title);
-        specificItemPicTitle.text(title);
-        if (personLoggedIn === true) {
-            specificItemPicTitle.css({
-                'border-style': 'solid',
-                'border-width': '4px',
-                'border-color': 'red'
-              });
-        } else {
-            if (title === "Title" || title === "None") {
-                specificItemPicTitle.text("");
-                specificItemPicTitle.removeClass("lightText");
-            }
-        }
-        justH3.append(specificItemPicTitle);
-        $(this).append(justH3);
-        
-        
         // put the desc of this picture underneath that
-        var justH3 = $("<h3>");
-        var specificItemPicDesc = $("<span>");
-        specificItemPicDesc.addClass("descText");
-        specificItemPicDesc.attr("id", "imageDescEdit");
-        specificItemPicDesc.attr("data-id", thisDataId);
-        console.log("desc before: ", desc);
-        var desc = $(this).data("desc");
-        console.log("desc after: ", desc);
-        specificItemPicDesc.text(desc);
-        if (personLoggedIn === true) {
-            specificItemPicDesc.css({
-                'border-style': 'solid',
-                'border-width': '4px',
-                'border-color': 'red'
-              });
-        } else {
-                if (desc === "Description" || desc === "None") {
-                    specificItemPicDesc.text("");
-                    specificItemPicDesc.removeClass("descText");
+        function addDesc() {
+            var justH3 = $("<h3>");
+            var specificItemPicDesc = $("<span>");
+            specificItemPicDesc.addClass("descText");
+            specificItemPicDesc.attr("id", "imageDescEdit");
+            specificItemPicDesc.attr("data-id", thisDataId);
+            console.log("desc before: ", desc);
+            var desc = $(this).data("desc");
+            console.log("desc after: ", desc);
+            specificItemPicDesc.text(desc);
+            if (personLoggedIn === true) {
+                specificItemPicDesc.css({
+                    'border-style': 'solid',
+                    'border-width': '4px',
+                    'border-color': 'red'
+                });
+            } else {
+                    if (desc === "Description" || desc === "None") {
+                        specificItemPicDesc.text("");
+                        specificItemPicDesc.removeClass("descText");
+                    }
+                }
+            justH3.append(specificItemPicDesc);   
+            justH3.insertAfter(this);
+        }
+
+        // put the title of this picture underneath
+        function addTitle() {
+            var justH3 = $("<h3>");
+            var specificItemPicTitle = $("<span>");
+            specificItemPicTitle.addClass("lightText");
+            specificItemPicTitle.attr("id", "imageTitleEdit");
+            specificItemPicTitle.attr("data-id", thisDataId);
+            console.log("title before: ", title);
+            var title = $(this).attr("title");
+            console.log("title after: ", title);
+            specificItemPicTitle.text(title);
+            if (personLoggedIn === true) {
+                specificItemPicTitle.css({
+                    'border-style': 'solid',
+                    'border-width': '4px',
+                    'border-color': 'red'
+                });
+            } else {
+                if (title === "Title" || title === "None") {
+                    specificItemPicTitle.text("");
+                    specificItemPicTitle.removeClass("lightText");
                 }
             }
-        justH3.append(specificItemPicDesc);   
-        $(this).append(justH3);
+            justH3.append(specificItemPicTitle);
+            justH3.insertAfter(this);
+        }
     });
 
     // If Mark clicks the Delete this Image button on an additional Large Image, this function happens

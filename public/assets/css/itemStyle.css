@@ -159,8 +159,8 @@ button, input#editTitle {
 }
 
 #addtlImg {
-    /*margin-right: 36px;
-    margin-bottom: 36px;*/
+    margin-right: 36px;
+    margin-bottom: 36px;
 }
 
 .bigItemImage {
@@ -170,8 +170,8 @@ button, input#editTitle {
 #additionalImages {
     margin-top: 30px;
     background-color: #333;
-    /*overflow: auto;
-    white-space: nowrap;*/
+    overflow: auto;
+    white-space: nowrap;
     padding: 10px;
 }
 
@@ -183,7 +183,6 @@ button, input#editTitle {
 .addtlBigItemImage {
     width: 90%;
     padding: 10px;
-    overflow: visible;
 }
 
 #deleteImage {
