@@ -28,6 +28,8 @@ jQuery(document).ready(function( $ ){
     var sourceNumberOfImages = [];
     // variables for editing data
     var thisImageId; //data-id of image
+    var dataNoOfImages = 0;
+    var clickOnImg = false;
     var horTitle = "notyet";
     var horDesc = "notyet";
 
@@ -469,7 +471,7 @@ jQuery(document).ready(function( $ ){
         $("#specificItem").append(justH3);
 
         // currently adding the number of images
-        var dataNoOfImages = $(this).parent().data("noofimages");
+        dataNoOfImages = $(this).parent().data("noofimages");
         console.log("dataNoOfImages: " + dataNoOfImages);
         if (dataNoOfImages > 1) {
             $("#specificItem").append("<button type='button' id='showAdditionalImages'" + 
@@ -519,9 +521,13 @@ jQuery(document).ready(function( $ ){
                         // can I just add the attribute for the currentItemId here?
                         console.log("inside innerImageForEach large addtl images creation, currentItemId: " + currentItemId);
                         $("div#additionalImages img").attr("data-itemid", currentItemId);
-                        // put the title of this picture underneath with a mouseover.
+                        console.log("dataNoOfImages: ", dataNoOfImages);
+                        console.log("innerIndex: ", innerIndex);
+                        //when innerIndex is the same as dataNoOfImages, then call the mouseover function?
+                        // if ((dataNoOfImages - 1) === innerIndex) {
+                        //     labelImages();
+                        // }
                         
-                        // add the onclick event to scroll to the large additional images div below
                         // commented out since the horizontal scroll div put in
                         // $("div#additionalImages img").attr("onclick", "location.href='#largeAddtlImages'");
                         // $("div#additionalImages img").attr("target", "_self");
@@ -532,40 +538,38 @@ jQuery(document).ready(function( $ ){
         });
     });
 
-    <div id="img#addtlImg" onmousemove="addLabels(event)" onmouseout="clearLabels()"></div>
+    //Add a function for just when in edit mode, add delete button, title and desc to each of the images
+    // when clicked by the user? NOt sure.
 
-    //Add a function for just when in edit mode, add delete button, title and desc to all the images
-    // the add title and desc labels are their own functions so don't write them twice (for in edit mode or not)
+    // then add title and desc labels are their own functions so don't write them twice (for in edit mode or not)
 
     // then the onmousemove function just addes labels on mouse move but not in edit mode
 
     //  write the onmouseout function to clear the added labels
 
     // mouseover on one of the additional images, and display it's title and description
-    $(document).on("click", "img#addtlImg", function(event) {  // or is it hover? mouseenter? add onmouseleave below
-        event.preventDefault();
+    $(document).on("click", "img#addtlImg", function(event) {
         console.log("I clicked on an additional image");
-        //$("#largeAddtlImages").empty();
-        
-        // loads the additional image that was just clicked, as wide as the screen
-        var thisDataId = $(this).data("id");
-        var thisItemId = $(this).data("itemid");  // or, is it .attr("data-itemid")?
-        console.log("image data-id of the clicked pic (dataid of the image): ", thisDataId);
-        console.log("item data-id of the clicked pic (dataid of the item): ", thisItemId);
-        // var imgSrc = $(this).attr("src");
-        // var bigImage = $("<img>");
-        // bigImage.addClass("addtlBigItemImage");
-        // bigImage.attr("data-id", thisDataId);
-        // bigImage.attr("src", imgSrc);
-        // $("#largeAddtlImages").append(bigImage);
-        // this needs to be like adding title and desc and use insertAfter
-        if (personLoggedIn === true) {
-            $(this).append(`<br><button type="button" class="btn btn-danger"` +
-            ` id="deleteImage" data-itemid="` + thisItemId + `" data-id="`+ thisDataId +`">Delete This Image</button>`);
-        }
+        console.log("clickonImg: ", clickOnImg);
+        if (clickOnImg === true) {
+            //delete the h3s
+            $(this).empty();
+            console.log("Image has already been clicked on");
+            clickOnImg = false;
+        } else {
+            // loads the additional image that was just clicked, as wide as the screen
+            var thisDataId = $(this).data("id");
+            var thisItemId = $(this).data("itemid");  // or, is it .attr("data-itemid")?
+            console.log("image data-id of the clicked pic (dataid of the image): ", thisDataId);
+            console.log("item data-id of the clicked pic (dataid of the item): ", thisItemId);
+            
+            if (personLoggedIn === true) {
+                $(this).append(`<br><button type="button" class="btn btn-danger"` +
+                ` id="deleteImage" data-itemid="` + thisItemId + `" data-id="`+ thisDataId +`">Delete This Image</button>`);
+            }
 
-        // put the desc of this picture underneath that
-        function addDesc() {
+            // put the desc of this picture underneath that
+            
             var justH3 = $("<h3>");
             var specificItemPicDesc = $("<span>");
             specificItemPicDesc.addClass("descText");
@@ -589,10 +593,10 @@ jQuery(document).ready(function( $ ){
                 }
             justH3.append(specificItemPicDesc);   
             justH3.insertAfter(this);
-        }
+            
 
-        // put the title of this picture underneath
-        function addTitle() {
+            // put the title of this picture underneath
+            
             var justH3 = $("<h3>");
             var specificItemPicTitle = $("<span>");
             specificItemPicTitle.addClass("lightText");
@@ -616,6 +620,7 @@ jQuery(document).ready(function( $ ){
             }
             justH3.append(specificItemPicTitle);
             justH3.insertAfter(this);
+            clickOnImg = true;
         }
     });
 
