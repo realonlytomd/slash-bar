@@ -543,20 +543,17 @@ jQuery(document).ready(function( $ ){
 
     // then add title and desc labels are their own functions so don't write them twice (for in edit mode or not)
 
-    // then the onmousemove function just addes labels on mouse move but not in edit mode
-
-    //  write the onmouseout function to clear the added labels
-
-    // mouseover on one of the additional images, and display it's title and description
+    //  click on one of the additional images, and display it's title and description
     $(document).on("click", "img#addtlImg", function(event) {
+        event.preventDefault();
         console.log("I clicked on an additional image");
         console.log("clickonImg: ", clickOnImg);
         if (clickOnImg === true) {
             //delete the spans
             // BUT this is deleting the main picture's spans too!!!!
             // this still needs to be tied to (this)
-            $("span#imageTitleEdit").remove();
-            $("span#imageDescEdit").remove();
+            $(this).siblings("span#imageTitleEdit").remove();
+            $(this).siblings("span#imageDescEdit").remove();
             console.log("Image has already been clicked on");
             clickOnImg = false;
         } else {
@@ -596,6 +593,7 @@ jQuery(document).ready(function( $ ){
                 }
             //justH3.append(specificItemPicDesc);   
             specificItemPicDesc.insertAfter(this);
+
             
 
             // put the title of this picture underneath
@@ -623,6 +621,8 @@ jQuery(document).ready(function( $ ){
             }
             //justH3.append(specificItemPicTitle);
             specificItemPicTitle.insertAfter(this);
+            // a working but not perfect ex $(this).siblings("h3#labelTitle").append(specificItemPicTitle);
+            // example of format from stachoverflow $('.divOne').siblings('.divTwo').children('h3')
             clickOnImg = true;
         }
     });
