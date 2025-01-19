@@ -110,7 +110,8 @@ button, input#editTitle {
 
 .lightText {
     color: white;
-    display: block;  
+    display: block;
+    font-size: 24px; 
     /*background-color: rgb(201, 231, 237);
     padding-left: 4px;
     padding-right: 4px;
@@ -118,9 +119,11 @@ button, input#editTitle {
 }
 
 .descText {
+    display: block;
+    margin:0 auto;
     background-color: rgb(140, 145, 146);
-    display: inline-block;
     font-family: "Amaranth", sans-serif;
+    font-size: 24px;
     font-weight: 400;
     font-style: normal;
     width: 80%;
@@ -170,8 +173,8 @@ button, input#editTitle {
 #additionalImages {
     margin-top: 30px;
     background-color: #333;
-    overflow: auto;
-    white-space: nowrap;
+    /*overflow: auto;
+    white-space: nowrap;*/
     padding: 10px;
 }
 

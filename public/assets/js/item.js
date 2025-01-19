@@ -423,7 +423,7 @@ jQuery(document).ready(function( $ ){
         $("#specificItem").append(bigImage);
 
         // put the title of this picture underneath
-        var justH3 = $("<h3>");
+        //var justH3 = $("<h3>");
         var specificItemPicTitle = $("<span>");
         specificItemPicTitle.addClass("lightText");
         specificItemPicTitle.attr("id", "imageTitleEdit");
@@ -443,11 +443,11 @@ jQuery(document).ready(function( $ ){
                 specificItemPicTitle.removeClass("lightText");
             }
         }
-        justH3.append(specificItemPicTitle);
-        $("#specificItem").append(justH3);
+        //justH3.append(specificItemPicTitle);
+        $("#specificItem").append(specificItemPicTitle);
 
         // put the desc of this picture underneath that
-        var justH3 = $("<h3>");
+        //var justH3 = $("<h3>");
         var specificItemPicDesc = $("<span>");
         specificItemPicDesc.addClass("descText");
         specificItemPicDesc.attr("id", "imageDescEdit");
@@ -467,8 +467,8 @@ jQuery(document).ready(function( $ ){
                 specificItemPicDesc.removeClass("descText");
             }
         }
-        justH3.append(specificItemPicDesc);
-        $("#specificItem").append(justH3);
+        //justH3.append(specificItemPicDesc);
+        $("#specificItem").append(specificItemPicDesc);
 
         // currently adding the number of images
         dataNoOfImages = $(this).parent().data("noofimages");
@@ -552,8 +552,11 @@ jQuery(document).ready(function( $ ){
         console.log("I clicked on an additional image");
         console.log("clickonImg: ", clickOnImg);
         if (clickOnImg === true) {
-            //delete the h3s
-            $(this).empty();
+            //delete the spans
+            // BUT this is deleting the main picture's spans too!!!!
+            // this still needs to be tied to (this)
+            $("span#imageTitleEdit").remove();
+            $("span#imageDescEdit").remove();
             console.log("Image has already been clicked on");
             clickOnImg = false;
         } else {
@@ -570,7 +573,7 @@ jQuery(document).ready(function( $ ){
 
             // put the desc of this picture underneath that
             
-            var justH3 = $("<h3>");
+            //var justH3 = $("<h3>");
             var specificItemPicDesc = $("<span>");
             specificItemPicDesc.addClass("descText");
             specificItemPicDesc.attr("id", "imageDescEdit");
@@ -591,13 +594,13 @@ jQuery(document).ready(function( $ ){
                         specificItemPicDesc.removeClass("descText");
                     }
                 }
-            justH3.append(specificItemPicDesc);   
-            justH3.insertAfter(this);
+            //justH3.append(specificItemPicDesc);   
+            specificItemPicDesc.insertAfter(this);
             
 
             // put the title of this picture underneath
             
-            var justH3 = $("<h3>");
+            //var justH3 = $("<h3>");
             var specificItemPicTitle = $("<span>");
             specificItemPicTitle.addClass("lightText");
             specificItemPicTitle.attr("id", "imageTitleEdit");
@@ -618,8 +621,8 @@ jQuery(document).ready(function( $ ){
                     specificItemPicTitle.removeClass("lightText");
                 }
             }
-            justH3.append(specificItemPicTitle);
-            justH3.insertAfter(this);
+            //justH3.append(specificItemPicTitle);
+            specificItemPicTitle.insertAfter(this);
             clickOnImg = true;
         }
     });
