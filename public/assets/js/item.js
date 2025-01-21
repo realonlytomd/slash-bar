@@ -72,6 +72,7 @@ jQuery(document).ready(function( $ ){
         $("#editItemName").hide();
         $("#specificItem").empty();
         $("#additionalImages").empty();
+        $("#additionalImages").css("background-color", "transparent");
         $("#largeAddtlImages").empty();
         $("#mainImageButtonSpace").empty();  // remove the button - it should only appear when Mark creates a new item
         $("#noImageYet").hide();
@@ -201,6 +202,7 @@ jQuery(document).ready(function( $ ){
         $("#editItemName").hide();
         $("#specificItem").empty();
         $("#additionalImages").empty();
+        $("#additionalImages").css("background-color", "transparent");
         $("#largeAddtlImages").empty();
         itemIconArray = [];
         if (personLoggedIn === false) {
@@ -336,6 +338,7 @@ jQuery(document).ready(function( $ ){
         $("#editItemName").empty();
         $("#editItemName").show();
         $("#additionalImages").empty();
+        $("#additionalImages").css("background-color", "transparent");
         $("#largeAddtlImages").empty();
 
         // retrieve the id of the item whose image was clicked. Used in edits of name and bio.
@@ -352,6 +355,7 @@ jQuery(document).ready(function( $ ){
         $("#editItemName").text(name);
         if (personLoggedIn === true) {
             $("#editItemName").css({
+                'display': "inline-block",
                 'border-style': 'solid',
                 'border-width': '4px',
                 'border-color': 'red'
@@ -370,6 +374,7 @@ jQuery(document).ready(function( $ ){
         specificItemBio.text(bio);
         if (personLoggedIn === true) {
             specificItemBio.css({
+                'display': "inline-block",
                 'border-style': 'solid',
                 'border-width': '4px',
                 'border-color': 'red'
@@ -395,6 +400,7 @@ jQuery(document).ready(function( $ ){
         console.log("building large image: typeof specificItemOrder " + typeof specificItemOrder);
         if (personLoggedIn === true) {
             specificItemOrder.css({
+                'display': "inline-block",
                 'border-style': 'solid',
                 'border-width': '4px',
                 'border-color': 'red'
@@ -433,6 +439,7 @@ jQuery(document).ready(function( $ ){
         specificItemPicTitle.text(title);
         if (personLoggedIn === true) {
             specificItemPicTitle.css({
+                'display': "inline-block",
                 'border-style': 'solid',
                 'border-width': '4px',
                 'border-color': 'red'
@@ -457,6 +464,7 @@ jQuery(document).ready(function( $ ){
         specificItemPicDesc.text(desc);
         if (personLoggedIn === true) {
             specificItemPicDesc.css({
+                'display': "inline-block",
                 'border-style': 'solid',
                 'border-width': '4px',
                 'border-color': 'red'
@@ -474,7 +482,7 @@ jQuery(document).ready(function( $ ){
         dataNoOfImages = $(this).parent().data("noofimages");
         console.log("dataNoOfImages: " + dataNoOfImages);
         if (dataNoOfImages > 1) {
-            $("#specificItem").append("<button type='button' id='showAdditionalImages'" + 
+            $("#specificItem").append("<br><button type='button' id='showAdditionalImages'" + 
             ">Additional Views</button>");
         }
     });
@@ -515,6 +523,7 @@ jQuery(document).ready(function( $ ){
                         console.log("dataGetImages: ", dataGetImages);
                         //console.log("dataGetImages[0].title: ", dataGetImages[0].title); //try to get specific info
                         $("#additionalImages").append(dataGetImages);
+                        $("#additionalImages").css("background-color", "#333");
                         // change the id from itemImg to addtlImg. It was itemImg from db retrieval in the api-routes file.
                         $("div#additionalImages img").attr("class", "addtlBigItemImage");
                         $("div#additionalImages img").attr("id", "addtlImg");
@@ -554,6 +563,7 @@ jQuery(document).ready(function( $ ){
             // this still needs to be tied to (this)
             $(this).siblings("span#imageTitleEdit").remove();
             $(this).siblings("span#imageDescEdit").remove();
+            $(this).siblings("button#deleteImage").remove();
             console.log("Image has already been clicked on");
             clickOnImg = false;
         } else {
@@ -562,11 +572,6 @@ jQuery(document).ready(function( $ ){
             var thisItemId = $(this).data("itemid");  // or, is it .attr("data-itemid")?
             console.log("image data-id of the clicked pic (dataid of the image): ", thisDataId);
             console.log("item data-id of the clicked pic (dataid of the item): ", thisItemId);
-            
-            if (personLoggedIn === true) {
-                $(this).append(`<br><button type="button" class="btn btn-danger"` +
-                ` id="deleteImage" data-itemid="` + thisItemId + `" data-id="`+ thisDataId +`">Delete This Image</button>`);
-            }
 
             // put the desc of this picture underneath that
             
@@ -581,6 +586,7 @@ jQuery(document).ready(function( $ ){
             specificItemPicDesc.text(desc);
             if (personLoggedIn === true) {
                 specificItemPicDesc.css({
+                    'display': "inline-block",
                     'border-style': 'solid',
                     'border-width': '4px',
                     'border-color': 'red'
@@ -609,6 +615,7 @@ jQuery(document).ready(function( $ ){
             specificItemPicTitle.text(title);
             if (personLoggedIn === true) {
                 specificItemPicTitle.css({
+                    'display': "inline-block",
                     'border-style': 'solid',
                     'border-width': '4px',
                     'border-color': 'red'
@@ -623,6 +630,13 @@ jQuery(document).ready(function( $ ){
             specificItemPicTitle.insertAfter(this);
             // a working but not perfect ex $(this).siblings("h3#labelTitle").append(specificItemPicTitle);
             // example of format from stachoverflow $('.divOne').siblings('.divTwo').children('h3')
+
+            if (personLoggedIn === true) {
+                // $(this).append(`<br><button type="button" class="btn btn-danger"` +
+                // ` id="deleteImage" data-itemid="` + thisItemId + `" data-id="`+ thisDataId +`">Delete This Image</button>`);
+                $(`<br><button type="button" class="btn btn-danger"` +
+                 ` id="deleteImage" data-itemid="` + thisItemId + `" data-id="`+ thisDataId +`">Delete This Image</button>`).insertAfter(this);
+            }
             clickOnImg = true;
         }
     });

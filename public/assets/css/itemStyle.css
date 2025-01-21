@@ -111,6 +111,7 @@ button, input#editTitle {
 .lightText {
     color: white;
     display: block;
+    margin:0 auto;
     font-size: 24px; 
     /*background-color: rgb(201, 231, 237);
     padding-left: 4px;
@@ -156,15 +157,15 @@ button, input#editTitle {
     border-radius: 50%;
     outline-color: rgb(47, 63, 80);
     outline-style: groove;
-    box-shadow: 5px 10px 18px green;
+    box-shadow: 5px 10px 18px #567049;
     /*box-shadow: 5px 10px 18px #1a4863;*/
     cursor: pointer;
 }
 
-#addtlImg {
+/*#addtlImg {
     margin-right: 36px;
     margin-bottom: 36px;
-}
+}*/
 
 .bigItemImage {
     width: 90%;
@@ -172,7 +173,6 @@ button, input#editTitle {
 
 #additionalImages {
     margin-top: 30px;
-    background-color: #333;
     /*overflow: auto;
     white-space: nowrap;*/
     padding: 10px;
