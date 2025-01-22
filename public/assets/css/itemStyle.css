@@ -110,7 +110,6 @@ button, input#editTitle {
 
 .lightText {
     color: white;
-    display: block;
     margin:0 auto;
     font-size: 24px; 
     /*background-color: rgb(201, 231, 237);
@@ -120,7 +119,6 @@ button, input#editTitle {
 }
 
 .descText {
-    display: block;
     margin:0 auto;
     background-color: rgb(140, 145, 146);
     font-family: "Amaranth", sans-serif;
@@ -189,11 +187,10 @@ button, input#editTitle {
 }
 
 #deleteImage {
-    margin-top: -65px;
+    margin-top: -120px;
 }
 
 #logoutButton {
-    display: inline-block;
     font-size: 10px;
 }
 

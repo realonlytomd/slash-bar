@@ -355,7 +355,6 @@ jQuery(document).ready(function( $ ){
         $("#editItemName").text(name);
         if (personLoggedIn === true) {
             $("#editItemName").css({
-                'display': "inline-block",
                 'border-style': 'solid',
                 'border-width': '4px',
                 'border-color': 'red'
@@ -374,7 +373,6 @@ jQuery(document).ready(function( $ ){
         specificItemBio.text(bio);
         if (personLoggedIn === true) {
             specificItemBio.css({
-                'display': "inline-block",
                 'border-style': 'solid',
                 'border-width': '4px',
                 'border-color': 'red'
@@ -400,7 +398,6 @@ jQuery(document).ready(function( $ ){
         console.log("building large image: typeof specificItemOrder " + typeof specificItemOrder);
         if (personLoggedIn === true) {
             specificItemOrder.css({
-                'display': "inline-block",
                 'border-style': 'solid',
                 'border-width': '4px',
                 'border-color': 'red'
@@ -439,7 +436,6 @@ jQuery(document).ready(function( $ ){
         specificItemPicTitle.text(title);
         if (personLoggedIn === true) {
             specificItemPicTitle.css({
-                'display': "inline-block",
                 'border-style': 'solid',
                 'border-width': '4px',
                 'border-color': 'red'
@@ -464,7 +460,6 @@ jQuery(document).ready(function( $ ){
         specificItemPicDesc.text(desc);
         if (personLoggedIn === true) {
             specificItemPicDesc.css({
-                'display': "inline-block",
                 'border-style': 'solid',
                 'border-width': '4px',
                 'border-color': 'red'
@@ -559,8 +554,8 @@ jQuery(document).ready(function( $ ){
         console.log("clickonImg: ", clickOnImg);
         if (clickOnImg === true) {
             //delete the spans
-            // BUT this is deleting the main picture's spans too!!!!
-            // this still needs to be tied to (this)
+            // BUT this is deleting previously selected images spans too!!!!
+            // this still needs to be tied to just (this)
             $(this).siblings("span#imageTitleEdit").remove();
             $(this).siblings("span#imageDescEdit").remove();
             $(this).siblings("button#deleteImage").remove();
@@ -586,10 +581,10 @@ jQuery(document).ready(function( $ ){
             specificItemPicDesc.text(desc);
             if (personLoggedIn === true) {
                 specificItemPicDesc.css({
-                    'display': "inline-block",
                     'border-style': 'solid',
                     'border-width': '4px',
-                    'border-color': 'red'
+                    'border-color': 'red',
+                    'margin-top': '10px'
                 });
             } else {
                     if (desc === "Description" || desc === "None") {
@@ -615,7 +610,6 @@ jQuery(document).ready(function( $ ){
             specificItemPicTitle.text(title);
             if (personLoggedIn === true) {
                 specificItemPicTitle.css({
-                    'display': "inline-block",
                     'border-style': 'solid',
                     'border-width': '4px',
                     'border-color': 'red'
@@ -634,7 +628,7 @@ jQuery(document).ready(function( $ ){
             if (personLoggedIn === true) {
                 // $(this).append(`<br><button type="button" class="btn btn-danger"` +
                 // ` id="deleteImage" data-itemid="` + thisItemId + `" data-id="`+ thisDataId +`">Delete This Image</button>`);
-                $(`<br><button type="button" class="btn btn-danger"` +
+                $(`<button type="button" class="btn btn-danger"` +
                  ` id="deleteImage" data-itemid="` + thisItemId + `" data-id="`+ thisDataId +`">Delete This Image</button>`).insertAfter(this);
             }
             clickOnImg = true;
