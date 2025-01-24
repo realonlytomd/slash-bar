@@ -560,6 +560,7 @@ jQuery(document).ready(function( $ ){
             $(this).siblings("span#imageDescEdit").remove();
             $(this).siblings("button#deleteImage").remove();
             console.log("Image has already been clicked on");
+            $(this).attr("class", "addtlBigItemImage");
             clickOnImg = false;
         } else {
             // loads the additional image that was just clicked, as wide as the screen
@@ -567,6 +568,7 @@ jQuery(document).ready(function( $ ){
             var thisItemId = $(this).data("itemid");  // or, is it .attr("data-itemid")?
             console.log("image data-id of the clicked pic (dataid of the image): ", thisDataId);
             console.log("item data-id of the clicked pic (dataid of the item): ", thisItemId);
+            $(this).attr("class", "bigItemImage");
 
             // put the desc of this picture underneath that
             
