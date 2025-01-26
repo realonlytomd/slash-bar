@@ -410,8 +410,6 @@ jQuery(document).ready(function( $ ){
             }
         }
         
-       
-
         // loads the main image, as wide as the screen
         
         //setting the currentItemId to thisItemId for retrieving additional pics later
@@ -420,6 +418,7 @@ jQuery(document).ready(function( $ ){
         console.log("id of currentItemId: ", currentItemId);
         var imgSrc = $(this).attr("src");
         var bigImage = $("<img>");
+        bigImage.attr("id", "firstImage");
         bigImage.addClass("bigItemImage");
         bigImage.attr("data-itemid", currentItemId);
         bigImage.attr("src", imgSrc);
@@ -483,8 +482,8 @@ jQuery(document).ready(function( $ ){
     });
 
     //click on the enlarged pic of an individual item to add more images
-    // available only to Mark in an "edit" mode
-    $(document).on("click", ".bigItemImage", function(event) {
+    // available only to user in an "edit" mode
+    $(document).on("click", "#firstImage", function(event) {
         event.preventDefault();
         if (personLoggedIn === true) {
             // bring up the modal to enter info for a new image for the item
