@@ -555,7 +555,7 @@ jQuery(document).ready(function( $ ){
             //delete the spans
             // BUT this is deleting previously selected images spans too!!!!
             // this still needs to be tied to just (this)
-            $(this).siblings("span#imageTitleEdit").remove();
+            $(this).siblings("h3#h3Title").remove();
             $(this).siblings("span#imageDescEdit").remove();
             $(this).siblings("button#deleteImage").remove();
             console.log("Image has already been clicked on");
@@ -600,7 +600,8 @@ jQuery(document).ready(function( $ ){
 
             // put the title of this picture underneath
             
-            //var justH3 = $("<h3>");
+            var justH3 = $("<h3>");
+            justH3.attr("id", "h3Title");
             var specificItemPicTitle = $("<span>");
             specificItemPicTitle.addClass("lightText");
             specificItemPicTitle.attr("id", "imageTitleEdit");
@@ -621,8 +622,8 @@ jQuery(document).ready(function( $ ){
                     specificItemPicTitle.removeClass("lightText");
                 }
             }
-            //justH3.append(specificItemPicTitle);
-            specificItemPicTitle.insertAfter(this);
+            justH3.append(specificItemPicTitle);
+            justH3.insertAfter(this);
             // a working but not perfect ex $(this).siblings("h3#labelTitle").append(specificItemPicTitle);
             // example of format from stachoverflow $('.divOne').siblings('.divTwo').children('h3')
 

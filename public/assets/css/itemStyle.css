@@ -108,6 +108,10 @@ button, input#editTitle {
     color: black;
 }
 
+#h3Title {
+    margin-top: -20px;
+}
+
 .lightText {
     color: white;
     font-size: 24px; 
@@ -130,6 +134,7 @@ button, input#editTitle {
     width: 80%;
     border-radius: 50px;
     padding: 15px;
+    margin-bottom: -50px;
 }
 
 #showImages {
