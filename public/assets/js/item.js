@@ -642,7 +642,7 @@ jQuery(document).ready(function( $ ){
     // along with the id number in the item db
     $(document).on("click", "#deleteImage", function(event) {
         event.preventDefault();
-        console.log("Mark clicked the delete image button!");
+        console.log("A user clicked the delete image button!");
         var thisImageId = $(this).data("id");
         currentImageId = thisImageId;
         var thisItemId = $(this).data("itemid");

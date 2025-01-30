@@ -109,7 +109,7 @@ button, input#editTitle {
 }
 
 #h3Title {
-    margin-top: -20px;
+    margin-top: 10px;
 }
 
 .lightText {
@@ -134,7 +134,7 @@ button, input#editTitle {
     width: 80%;
     border-radius: 50px;
     padding: 15px;
-    margin-bottom: -50px;
+    margin-bottom: 30px;
 }
 
 #showImages {
@@ -257,6 +257,7 @@ button.ItemButtons {
 
 button#showAdditionalImages {
     font-size: 27px;
+    margin-top: 50px;
 }
 
 span#editThisItem {
@@ -308,6 +309,10 @@ p.directions {
     .bigItemImage, .addtlBigItemImage {
         width: 40%;
         padding: 10px;
+    }
+
+    #h3Title {
+        margin-top: 0px;
     }
 
     .descText {
