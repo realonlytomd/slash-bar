@@ -477,7 +477,7 @@ jQuery(document).ready(function( $ ){
         console.log("dataNoOfImages: " + dataNoOfImages);
         if (dataNoOfImages > 1) {
             $("#specificItem").append("<br><button type='button' id='showAdditionalImages'" + 
-            ">Additional Views</button>");
+            ">Additional Pictures</button>");
         }
     });
 
