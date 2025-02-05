@@ -328,7 +328,7 @@ jQuery(document).ready(function( $ ){
         }
     //});
     }
-    //clicking on the picture of all the items displayed brings up a large pic and info about that item
+    //clicking on the picture of one of the items displayed brings up a large pic and info about that item
     // adding the display of additional pictures
     
     $(document).on("click", "#itemImg", function(event) {
@@ -541,11 +541,6 @@ jQuery(document).ready(function( $ ){
         });
     });
 
-    //Add a function for just when in edit mode, add delete button, title and desc to each of the images
-    // when clicked by the user? NOt sure.
-
-    // then add title and desc labels are their own functions so don't write them twice (for in edit mode or not)
-
     //  click on one of the additional images, and display it's title and description
     $(document).on("click", "img#addtlImg", function(event) {
         event.preventDefault();
@@ -595,8 +590,6 @@ jQuery(document).ready(function( $ ){
                 }
             //justH3.append(specificItemPicDesc);   
             specificItemPicDesc.insertAfter(this);
-
-            
 
             // put the title of this picture underneath
             
@@ -734,7 +727,7 @@ jQuery(document).ready(function( $ ){
         }
         if (order === "") {
             order = String((itemIconArray.length + 1) * 10);
-            console.log("assigned order from code not user order: ", order); // need to change this instead of them all being assigned 3000
+            console.log("assigned order from code not user order: ", order);
         }
         $.ajax({
             method: "GET",
