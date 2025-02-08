@@ -810,6 +810,9 @@ jQuery(document).ready(function( $ ){
         //get form from html
         console.log("inside 'submitNewItemImage' click, currentItemId: ", currentItemId);
         var imageform = $("#itemImageInputForm")[0];
+        
+        console.log("imageform: ", imageform);
+        console.log("[...imageform]: ", [...imageform]);
         // Create an FormData object called imageData
         var imageData = new FormData(imageform);
         $.ajax({

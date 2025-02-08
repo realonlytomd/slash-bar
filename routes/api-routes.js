@@ -359,7 +359,7 @@ module.exports = function(router) {
         });
     });
 
-    // This route deletes the kitten the user wants to delete
+    // This route deletes the item the user wants to delete
     router.delete("/item/delete/:id", function(req, res) {
         console.log("in /item/delete, req.params: ", req.params);
         console.log("in /item/delete/, req.params.id: ", req.params.id);
