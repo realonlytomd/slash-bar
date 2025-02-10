@@ -90,6 +90,7 @@ module.exports = function(router) {
     //It's now being called from item.js, not directly from html form
     // 
     router.post("/createImageItem/:id", upload.single("itemImageInput"), (req, res, next) => {
+        console.log("req.file: ", req.file);
         console.log("from api-routes step 8, req.file.filename: ", req.file.filename);
         console.log("req.body.title: ", req.body.title);
         console.log("req.body.desc: ", req.body.desc);

@@ -809,12 +809,13 @@ jQuery(document).ready(function( $ ){
         event.preventDefault();
         //get form from html
         console.log("inside 'submitNewItemImage' click, currentItemId: ", currentItemId);
-        var imageform = $("#itemImageInputForm")[0];
-        
-        console.log("imageform: ", imageform);
-        console.log("[...imageform]: ", [...imageform]);
+        var imageForm = $("#itemImageInputForm")[0];
+        console.log("$('#itemImageInputForm'): ", $("#itemImageInputForm"));
+        console.log("imageform: ", imageForm);
+        console.log("[...imageform]: ", [...imageForm]);
         // Create an FormData object called imageData
-        var imageData = new FormData(imageform);
+        var imageData = new FormData(imageForm);
+        console.log("imageData: ", imageData);
         $.ajax({
           type: "POST",
           enctype: "multipart/form-data",
