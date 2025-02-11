@@ -799,7 +799,7 @@ jQuery(document).ready(function( $ ){
                     })
                     .then(function(dataAddImage) {
                     // this sets up the fields populated to receive item name and image data
-                    console.log("in item.js, dataAddImage, after Item is populated: ", dataAddImage);
+                    console.log("in item.js, /popItem/:currentItemId, dataAddImage: ", dataAddImage);
                     });
         }
     });

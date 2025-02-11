@@ -52,6 +52,7 @@ module.exports = function(router) {
     // Route for getting a specific Item by id, and then populate it with an array for Images
     router.get("/popItem/:id", function(req, res) {
         // Using the id passed in the id parameter, and make a query that finds the matching one in the db
+        console.log("in /popItem/:id, req.params.id: ", req.parapms.id);
         db.Item.findOne({ _id: req.params.id })
             // then populate the kitten schema associated with it
             .populate([
@@ -62,7 +63,7 @@ module.exports = function(router) {
             ])
             .then(function(dbItem) {
             // If successful, find a User with the given id, send it back to the client
-            console.log("api-routes.js, JUST POPULATE ITEM, dbItem: ", dbItem);
+            console.log("api-routes.js, /ppItem/:id, JUST POPULATE ITEM, dbItem: ", dbItem);
             res.json(dbItem);
             })
             .catch(function(err) {
