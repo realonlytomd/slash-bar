@@ -92,17 +92,17 @@ module.exports = function(router) {
     router.post("/createImageItem/:id", upload.single("itemImageInput"), (req, res, next) => {
         console.log("req.file: ", req.file);
         console.log("from api-routes step 8, req.file.filename: ", req.file.filename);
-        console.log("req.body.title: ", req.body.title);
-        console.log("req.body.desc: ", req.body.desc);
-        if (req.body.title === "") {
-            req.body.title = "Title";
-        }
-        if (req.body.desc === "") {
-            req.body.desc = "Description";
-        }
+        //console.log("req.body.title: ", req.body.title);
+        //console.log("req.body.desc: ", req.body.desc);
+        // if (req.body.title === "") {
+        //     req.body.title = "Title";
+        // }
+        // if (req.body.desc === "") {
+        //     req.body.desc = "Description";
+        // }
         var obj = {
-            title: req.body.title,
-            desc: req.body.desc,
+            title: "Title",
+            desc: "Description",
             img: {
                 data: fs.readFileSync(path.join(__dirname + "/../uploads/" + req.file.filename)),
                 contentType: "image/jpeg"

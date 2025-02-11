@@ -33,7 +33,7 @@ jQuery(document).ready(function( $ ){
     var horTitle = "notyet";
     var horDesc = "notyet";
 
-    // code to bring up Mark's biography modal
+    // code to bring up User's biography modal
     $(document).on("click", "#personsBioPoint", function(event) {
         event.preventDefault();
         $("#personsBioShow").modal("show");
@@ -74,7 +74,7 @@ jQuery(document).ready(function( $ ){
         $("#additionalImages").empty();
         $("#additionalImages").css("background-color", "transparent");
         $("#largeAddtlImages").empty();
-        $("#mainImageButtonSpace").empty();  // remove the button - it should only appear when Mark creates a new item
+        $("#mainImageButtonSpace").empty();  // remove the button - it should only appear when User creates a new item
         $("#noImageYet").hide();
         console.log("personLoggedIn: " + personLoggedIn);
         if (personLoggedIn === true) {
@@ -83,7 +83,7 @@ jQuery(document).ready(function( $ ){
             $("#currentItems").show();
         }
         // empty out items previously retrieved from the db, and overall arrays since page isn't reloaded to keep 
-        // whether Mark is logged in or not
+        // whether User is logged in or not
         items = [];
         allItemIds = [];
         allItemNameswithImages = [];
@@ -113,7 +113,7 @@ jQuery(document).ready(function( $ ){
                 console.log("after just getting all items, allItemOrder: ", allItemOrder);
                 //this is a list of all the items without a main image
                 if (typeof items[i].image[0] === "undefined") { //need to remove the names without an image
-                    // The following should be written to the DOM ONLY when Mark is in edit mode
+                    // The following should be written to the DOM ONLY when User is in edit mode
                     $("#currentItems").append("<div class='itemTitles'><h4>" + items[i].name + 
                     "</h4><br><h5 class='noImage' data-itemid=" + items[i]._id + " data-toggle='modal' data-target='#newItemImageModal'>No Image</h5></div>");
                     //remove THIS item from allItemNameswithImages array
@@ -157,14 +157,14 @@ jQuery(document).ready(function( $ ){
         });
     }
 
-    //function for Mark to log in to see editable sections
+    //function for User to log in to see editable sections
     $(document).on("click", "#personname", function(event) {
         event.preventDefault();
-        console.log("Mark has clicked log in!");
+        console.log("User has clicked log in!");
         $("#loginArtist").modal("show");
     });
 
-    // after Mark enters his password and clicks submit
+    // after User enters his password and clicks submit
     $(document).on("click", "#submitPassword", function(event) {
         event.preventDefault();
         var password = $("#enterPass").val().trim();
@@ -175,7 +175,7 @@ jQuery(document).ready(function( $ ){
             console.log("personLoggedIn: " + personLoggedIn);
             $("#enterPass").val("");
             $("#loginArtist").modal("hide");
-            // now enter functions that are called to show Mark what he can edit.
+            // now enter functions that are called to show User what they can edit.
             $("#logoutButton").show();
             $("button#createItem").show();
         } else {
@@ -185,7 +185,7 @@ jQuery(document).ready(function( $ ){
         }
     });
 
-    // when Mark clicks the Logout Button
+    // when User clicks the Logout Button
     $(document).on("click", "#logoutButton", function(event) {
         event.preventDefault();
         window.location.replace("/");
@@ -213,7 +213,7 @@ jQuery(document).ready(function( $ ){
             'background-image' : 'url("/assets/pictures/fadeRanch.jpg")',
             'background-size' : 'cover'
           });
-        //first sort to get the order of items to match Mark's preferred order        
+        //first sort to get the order of items to match User's preferred order        
         // adding a sort numerically for allItemOrder, then sort the other 4 arrays the SAME WAY
         // this means the wrongOrderId and allImagesOfItems arrays will be sorted to this new order
         // down below in the function called by clicking #revealItems.
@@ -405,7 +405,7 @@ jQuery(document).ready(function( $ ){
               justH4.append(specificItemOrder);
               $("#specificItem").append(justH4);
         } else {
-            if (order === NaN) { //not sure why I did this instead of just not writing it to DOM if Mark isn't logged in
+            if (order === NaN) { //not sure why I did this instead of just not writing it to DOM if User isn't logged in
                 specificItemOrder.text("");
             }
         }
@@ -481,7 +481,7 @@ jQuery(document).ready(function( $ ){
         }
     });
 
-    //click on the enlarged pic of an individual item to add more images
+    //click on the enlarged pic of an individual item to add additional images
     // available only to user in an "edit" mode
     $(document).on("click", "#firstImage", function(event) {
         event.preventDefault();
@@ -630,7 +630,7 @@ jQuery(document).ready(function( $ ){
         }
     });
 
-    // If Mark clicks the Delete this Image button on an additional Large Image, this function happens
+    // If User clicks the Delete this Image button on an additional Large Image, this function happens
     // the image is deleted, and it's associated Title and Description are removed,
     // along with the id number in the item db
     $(document).on("click", "#deleteImage", function(event) {
@@ -667,7 +667,7 @@ jQuery(document).ready(function( $ ){
     // the /getAItem/ route will get the array of images to be removed.
     $(document).on("click", "#deleteItem", function(event) {
         event.preventDefault();
-        console.log("Mark clicked the Delete Item Button!");
+        console.log("User clicked the Delete Item Button!");
         let text = "Are you sure?!\nEither OK or Cancel.";
         if (confirm(text) == true) {
             $("#editNameForm").modal("hide");
@@ -713,7 +713,7 @@ jQuery(document).ready(function( $ ){
     }
 
 
-    // this function happens when Mark clicks the submit a new item button, info is stored in the appropriate item db
+    // this function happens when User clicks the submit a new item button, info is stored in the appropriate item db
     $(document).on("click", "#submitNewItem", function(event) {
         event.preventDefault();
         console.log("is the number of items available? itemIconArray.length: ", itemIconArray.length);
@@ -755,15 +755,15 @@ jQuery(document).ready(function( $ ){
         });
     });
 
-    // function to re-retrieve getAllData if no image is initially given to a new item, the No Image button is clicked by Mark
+    // function to re-retrieve getAllData if no image is initially given to a new item, the No Image button is clicked by User
     $(document).on("click", "#noImageYet", function(event) {
         event.preventDefault();
-        $("#mainImageButtonSpace").empty();  // remove the button - it should only appear when Mark creates a new item
+        $("#mainImageButtonSpace").empty();  // remove the button - it should only appear when User creates a new item
         //window.location.replace("/");
         getAllData();
     });
 
-     // this function is after Mark clicks the noimage label under a previously created item
+     // this function is after User clicks the noimage label under a previously created item
      // but with no image added.. A modal appears for him to
     // enter the title, description and browse for an image,
     // but first the individual item must be found and populated to accept an array of images
@@ -782,26 +782,26 @@ jQuery(document).ready(function( $ ){
                 });
         });
 
-    // this function is after Mark clicks the add main image button. A modal appears for him to
+    // this function is after User clicks the add main image button. A modal appears for him to
     // enter the title, description and browse for an image,
     // but first the individual item must be found and populated to accept an array of images
     $(document).on("click", "#createImageItem", function(event) {
-    event.preventDefault();
-    if (personLoggedIn === true) {
-        $("#newItemImageModal").modal("show");
-        $("#mainImageButtonSpace").empty();  // remove the button - it should only appear when Mark creates a new item
-        //currentItemId is already set from Mark entering a new item
-        console.log("inside createImageItem click, currentItemId: ", currentItemId);
-        // make an ajax call for the item to be populated
-            $.ajax({
-                method: "GET",
-                url: "/popItem/" + currentItemId
-                })
-                .then(function(dataAddImage) {
-                // this sets up the fields populated to receive item name and image data
-                console.log("in item.js, dataAddImage, after Item is populated: ", dataAddImage);
-                });
-    }
+        event.preventDefault();
+        if (personLoggedIn === true) {
+            $("#newItemImageModal").modal("show");
+            $("#mainImageButtonSpace").empty();  // remove the button - it should only appear when User creates a new item
+            //currentItemId is already set from User entering a new item
+            console.log("inside createImageItem click, currentItemId: ", currentItemId);
+            // make an ajax call for the item to be populated
+                $.ajax({
+                    method: "GET",
+                    url: "/popItem/" + currentItemId
+                    })
+                    .then(function(dataAddImage) {
+                    // this sets up the fields populated to receive item name and image data
+                    console.log("in item.js, dataAddImage, after Item is populated: ", dataAddImage);
+                    });
+        }
     });
 
     // this function enters the item image into the correct item in the db after data entered into the modal
@@ -810,9 +810,7 @@ jQuery(document).ready(function( $ ){
         //get form from html
         console.log("inside 'submitNewItemImage' click, currentItemId: ", currentItemId);
         var imageForm = $("#itemImageInputForm")[0];
-        console.log("$('#itemImageInputForm'): ", $("#itemImageInputForm"));
         console.log("imageform: ", imageForm);
-        console.log("[...imageform]: ", [...imageForm]);
         // Create an FormData object called imageData
         var imageData = new FormData(imageForm);
         console.log("imageData: ", imageData);
@@ -828,10 +826,10 @@ jQuery(document).ready(function( $ ){
             console.log("after .then for submitting an image, itemdb: ", itemdb);
             // itemdb here is the item document with the new image data
             // then hide this modal
-            $("#title").val("");
-            $("#desc").val("");
+           // $("#title").val("");
+           // $("#desc").val("");
             $("#itemImageInput").val("");
-            $("#mainImageButtonSpace").empty();  // remove the button - it should only appear when Mark creates a new item
+            $("#mainImageButtonSpace").empty();  // remove the button - it should only appear when User creates a new item
             $("#newItemImageModal").modal("hide");
             //reload the current item div showing the changes
             $("#imageDiv").empty();
@@ -841,7 +839,7 @@ jQuery(document).ready(function( $ ){
           });
     });
 
-    // This function shows the form for Mark to edit the Name of a Item and 
+    // This function shows the form for User to edit the Name of a Item and 
     // includes a button to delete the entire item - 
     //after it's been displayed as a large pic.
     $(document).on("click", "#editItemName", function(event) {
@@ -858,7 +856,7 @@ jQuery(document).ready(function( $ ){
         }
     });
 
-    // This function shows the form for Mark to edit the Bio of a Item - after it's been displayed 
+    // This function shows the form for User to edit the Bio of a Item - after it's been displayed 
     // as a large pic.
     $(document).on("click", "#editItemBio", function(event) {
         event.preventDefault();
@@ -873,7 +871,7 @@ jQuery(document).ready(function( $ ){
         }
     });
 
-    // This function shows the form for Mark to edit the Order of a Item - after it's been displayed 
+    // This function shows the form for User to edit the Order of a Item - after it's been displayed 
     // as a large pic.
     $(document).on("click", "#editItemOrder", function(event) {
         event.preventDefault();
@@ -898,7 +896,7 @@ jQuery(document).ready(function( $ ){
         }
     });
 
-    // This function shows the form for Mark to edit the Title
+    // This function shows the form for User to edit the Title
     // of an image, either the main one or additional pics
     $(document).on("click", "#imageTitleEdit", function(event) {
         event.preventDefault();
@@ -913,7 +911,7 @@ jQuery(document).ready(function( $ ){
         }
     });
 
-    // This function shows the form for Mark to edit the Description
+    // This function shows the form for User to edit the Description
     // of an image, either the main one or additional pics
     $(document).on("click", "#imageDescEdit", function(event) {
         event.preventDefault();
