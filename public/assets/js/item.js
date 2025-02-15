@@ -807,13 +807,10 @@ jQuery(document).ready(function( $ ){
     // this function enters the item image into the correct item in the db after data entered into the modal
     $(document).on("click", "#submitNewItemImage", function(event) {
         event.preventDefault();
-        //get form from html
         console.log("inside 'submitNewItemImage' click, currentItemId: ", currentItemId);
         var imageForm = $("#itemImageInputForm")[0];
-        console.log("imageform: ", imageForm);
-        // Create an FormData object called imageData
         var imageData = new FormData(imageForm);
-        console.log("imageData: ", imageData);
+        
         $.ajax({
           type: "POST",
           enctype: "multipart/form-data",

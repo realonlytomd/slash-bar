@@ -90,8 +90,7 @@ module.exports = function(router) {
     //This is Step 8 from notes on uploading the images chosen by the user
     //It's now being called from item.js, not directly from html form
     // 
-    router.post("/createImageItem/:id", upload.single("itemImageInput"), (req, res, next) => {
-        console.log("req: ", req);
+    router.post("/createImageItem/:id", upload.array("itemImageInput[],6"), (req, res, next) => {
         console.log("req.file: ", req.file);
         console.log("from api-routes step 8, req.file.filename: ", req.file.filename);
         //console.log("req.body.title: ", req.body.title);
@@ -102,33 +101,38 @@ module.exports = function(router) {
         // if (req.body.desc === "") {
         //     req.body.desc = "Description";
         // }
-        var obj = {
-            title: "Title",
-            desc: "Description",
-            img: {
-                data: fs.readFileSync(path.join(__dirname + "/../uploads/" + req.file.filename)),
-                contentType: "image/jpeg"
+        var obj=[];
+        if(req.file) {
+            for(var i=0; i<req.file.length; i++) {
+                obj[i] = {
+                    title: "Title",
+                    desc: "Description",
+                    img: {
+                        data: fs.readFileSync(path.join(__dirname + "/../uploads/" + req.file[i].filename)),
+                        contentType: "image/jpeg"
+                    }
+                }
+                db.Image.create(obj[i])
+                .then(function(dbImage) {
+                    //console.log("after .create Image - dbImage: ", dbImage);
+                    //pushing the new kitten image into the document kitten array
+                    return db.Item.findOneAndUpdate(
+                        { _id: req.params[i].id },
+                        { $push: { image: dbImage._id } },
+                        { new: true }
+                    );
+                })
+                .then(function(dbItem) {
+                    //send back the correct item with the new data in the image array
+                    res.json(dbItem);
+
+                })
+                .catch(function(err) {
+                    //If an error occurred, send back
+                    res.json(err);
+                });
             }
         }
-        db.Image.create(obj)
-            .then(function(dbImage) {
-                //console.log("after .create Image - dbImage: ", dbImage);
-                //pushing the new kitten image into the document kitten array
-                return db.Item.findOneAndUpdate(
-                    { _id: req.params.id },
-                    { $push: { image: dbImage._id } },
-                    { new: true }
-                );
-            })
-            .then(function(dbItem) {
-                //send back the correct item with the new data in the image array
-                res.json(dbItem);
-
-            })
-            .catch(function(err) {
-                //If an error occurred, send back
-                res.json(err);
-            });
     });
 
     //This route gets one item document from item collection
