@@ -808,14 +808,21 @@ jQuery(document).ready(function( $ ){
     $(document).on("click", "#submitNewItemImage", function(event) {
         event.preventDefault();
         console.log("inside 'submitNewItemImage' click, currentItemId: ", currentItemId);
-        var imageForm = $("#itemImageInputForm")[0];
-        var imageData = new FormData(imageForm);
-        
+        // var imageForm = $("#itemImageInputForm")[0];
+        // var imageData = new FormData(imageForm);
+        var formData = new FormData();
+        $.each($("#itemImageInput"), function (i, obj) {                
+            $.each(obj.files, function (j, file) {                    
+                formData.append('itemImageInput[' + i + ']', file);
+            });
+        });
+        console.log("formData: ", formData);
+
         $.ajax({
           type: "POST",
           enctype: "multipart/form-data",
           url: "/createImageItem/" + currentItemId,
-          data: imageData,
+          data: formData,
           processData: false,
           contentType: false
         })

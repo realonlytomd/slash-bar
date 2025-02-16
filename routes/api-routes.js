@@ -90,25 +90,17 @@ module.exports = function(router) {
     //This is Step 8 from notes on uploading the images chosen by the user
     //It's now being called from item.js, not directly from html form
     // 
-    router.post("/createImageItem/:id", upload.array("itemImageInput[],6"), (req, res, next) => {
-        console.log("req.file: ", req.file);
-        console.log("from api-routes step 8, req.file.filename: ", req.file.filename);
-        //console.log("req.body.title: ", req.body.title);
-        //console.log("req.body.desc: ", req.body.desc);
-        // if (req.body.title === "") {
-        //     req.body.title = "Title";
-        // }
-        // if (req.body.desc === "") {
-        //     req.body.desc = "Description";
-        // }
+    router.post("/createImageItem/:id", upload.array("itemImageInput[]", 6), function(req, res, next) {
+        console.log("req.files: ", req.files);
+        console.log("from api-routes step 8, req.files.filename: ", req.files.filename);
         var obj=[];
-        if(req.file) {
-            for(var i=0; i<req.file.length; i++) {
+        if(req.files) {
+            for(var i=0; i<req.files.length; i++) {
                 obj[i] = {
                     title: "Title",
                     desc: "Description",
                     img: {
-                        data: fs.readFileSync(path.join(__dirname + "/../uploads/" + req.file[i].filename)),
+                        data: fs.readFileSync(path.join(__dirname + "/../uploads/" + req.files[i].filename)),
                         contentType: "image/jpeg"
                     }
                 }
