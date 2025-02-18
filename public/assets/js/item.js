@@ -803,45 +803,78 @@ jQuery(document).ready(function( $ ){
                     });
         }
     });
-
-    // this function enters the item image into the correct item in the db after data entered into the modal
+    //
+    //
     $(document).on("click", "#submitNewItemImage", function(event) {
         event.preventDefault();
-        console.log("inside 'submitNewItemImage' click, currentItemId: ", currentItemId);
-        // var imageForm = $("#itemImageInputForm")[0];
-        // var imageData = new FormData(imageForm);
-        var formData = new FormData();
-        $.each($("#itemImageInput"), function (i, obj) {                
-            $.each(obj.files, function (j, file) {                    
-                formData.append('itemImageInput[' + i + ']', file);
+    
+        const formData = new FormData();
+    
+        $.each($("#itemImageInput"), function(i, obj) {
+            $.each(obj.files, function(j, file) {
+                formData.append('itemImageInput[]', file); // Corrected line
             });
         });
-        console.log("formData: ", formData);
-
+    
         $.ajax({
-          type: "POST",
-          enctype: "multipart/form-data",
-          url: "/createImageItem/" + currentItemId,
-          data: formData,
-          processData: false,
-          contentType: false
-        })
-        .then(function(itemdb) {
-            console.log("after .then for submitting an image, itemdb: ", itemdb);
-            // itemdb here is the item document with the new image data
-            // then hide this modal
-           // $("#title").val("");
-           // $("#desc").val("");
-            $("#itemImageInput").val("");
-            $("#mainImageButtonSpace").empty();  // remove the button - it should only appear when User creates a new item
-            $("#newItemImageModal").modal("hide");
-            //reload the current item div showing the changes
-            $("#imageDiv").empty();
-            //refresh the DOM after adding a new item with new image
-            //window.location.replace("/");
-            getAllData();
-          });
+            type: "POST",
+            url: "/createImageItem/" + currentItemId,
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(itemdb) { // Use 'success' instead of 'then' for older jQuery versions
+                console.log("Image upload success:", itemdb);
+                $("#itemImageInput").val(""); // Clear the file input
+                $("#mainImageButtonSpace").empty();
+                $("#newItemImageModal").modal("hide");
+                $("#imageDiv").empty();
+                getAllData(); // Or however you refresh the display
+            },
+            error: function(error) { // Add error handling
+              console.error("Image upload error:", error);
+              // Display error message to the user, etc.
+            }
+        });
     });
+    //
+    // this function enters the item image into the correct item in the db after data entered into the modal
+    // $(document).on("click", "#submitNewItemImage", function(event) {
+    //     event.preventDefault();
+    //     console.log("inside 'submitNewItemImage' click, currentItemId: ", currentItemId);
+    //     // var imageForm = $("#itemImageInputForm")[0];
+    //     // var imageData = new FormData(imageForm);
+    //     var formData = new FormData();
+    //     $.each($("#itemImageInput"), function (i, obj) {                
+    //         $.each(obj.files, function (j, file) {                    
+    //             formData.append('itemImageInput[' + i + ']', file);
+    //         });
+    //     });
+    //     console.log("formData: ", formData);
+
+    //     $.ajax({
+    //       type: "POST",
+    //       enctype: "multipart/form-data",
+    //       url: "/createImageItem/" + currentItemId,
+    //       data: formData,
+    //       processData: false,
+    //       contentType: false
+    //     })
+    //     .then(function(itemdb) {
+    //         console.log("after .then for submitting an image, itemdb: ", itemdb);
+    //         // itemdb here is the item document with the new image data
+    //         // then hide this modal
+    //        // $("#title").val("");
+    //        // $("#desc").val("");
+    //         $("#itemImageInput").val("");
+    //         $("#mainImageButtonSpace").empty();  // remove the button - it should only appear when User creates a new item
+    //         $("#newItemImageModal").modal("hide");
+    //         //reload the current item div showing the changes
+    //         $("#imageDiv").empty();
+    //         //refresh the DOM after adding a new item with new image
+    //         //window.location.replace("/");
+    //         getAllData();
+    //       });
+    // });
 
     // This function shows the form for User to edit the Name of a Item and 
     // includes a button to delete the entire item - 

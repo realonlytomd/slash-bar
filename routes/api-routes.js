@@ -87,45 +87,89 @@ module.exports = function(router) {
             });
     });
 
+    // This is from Gemini
+    //
+    router.post("/createImageItem/:id", upload.array("itemImageInput[]", 20), function(req, res, next) {
+        console.log("req.files: ", req.files);
+    
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ message: "No files uploaded" }); // Handle no files case
+        }
+    
+        const promises = req.files.map(file => { // Use map to create an array of promises
+            return new Promise((resolve, reject) => { // Use a Promise for each file
+                const image = {
+                    title: "Title", // Or get from req.body if needed
+                    desc: "Description", // Or get from req.body if needed
+                    img: {
+                        data: fs.readFileSync(path.join(__dirname + "/../uploads/" + file.filename)),
+                        contentType: file.mimetype || "image/jpeg" // Get mimetype from file or default
+                    }
+                };
+    
+                db.Image.create(image)
+                    .then(dbImage => {
+                        return db.Item.findOneAndUpdate(
+                            { _id: req.params.id }, // Access req.params.id correctly
+                            { $push: { image: dbImage._id } },
+                            { new: true }
+                        );
+                    })
+                    .then(dbItem => {
+                        resolve(dbItem); // Resolve with the updated item
+                    })
+                    .catch(reject); // Reject if there's an error
+            });
+        });
+    
+        Promise.all(promises)  // Wait for all promises to resolve
+            .then(results => {
+                res.json(results); // Send back all the updated items
+            })
+            .catch(err => {
+                console.error("Error creating images:", err);
+                res.status(500).json(err); // Send a 500 error with the error details
+            });
+    }); 
+    //
     //This is Step 8 from notes on uploading the images chosen by the user
     //It's now being called from item.js, not directly from html form
-    // 
-    router.post("/createImageItem/:id", upload.array("itemImageInput[]", 6), function(req, res, next) {
-        console.log("req.files: ", req.files);
-        console.log("from api-routes step 8, req.files.filename: ", req.files.filename);
-        var obj=[];
-        if(req.files) {
-            for(var i=0; i<req.files.length; i++) {
-                obj[i] = {
-                    title: "Title",
-                    desc: "Description",
-                    img: {
-                        data: fs.readFileSync(path.join(__dirname + "/../uploads/" + req.files[i].filename)),
-                        contentType: "image/jpeg"
-                    }
-                }
-                db.Image.create(obj[i])
-                .then(function(dbImage) {
-                    //console.log("after .create Image - dbImage: ", dbImage);
-                    //pushing the new kitten image into the document kitten array
-                    return db.Item.findOneAndUpdate(
-                        { _id: req.params[i].id },
-                        { $push: { image: dbImage._id } },
-                        { new: true }
-                    );
-                })
-                .then(function(dbItem) {
-                    //send back the correct item with the new data in the image array
-                    res.json(dbItem);
+    // router.post("/createImageItem/:id", upload.array("itemImageInput[]", 6), function(req, res, next) {
+    //     console.log("req.files: ", req.files);
+    //     console.log("from api-routes step 8, req.files.filename: ", req.files.filename);
+    //     var obj=[];
+    //     if(req.files) {
+    //         for(var i=0; i<req.files.length; i++) {
+    //             obj[i] = {
+    //                 title: "Title",
+    //                 desc: "Description",
+    //                 img: {
+    //                     data: fs.readFileSync(path.join(__dirname + "/../uploads/" + req.files[i].filename)),
+    //                     contentType: "image/jpeg"
+    //                 }
+    //             }
+    //             db.Image.create(obj[i])
+    //             .then(function(dbImage) {
+    //                 //console.log("after .create Image - dbImage: ", dbImage);
+    //                 //pushing the new kitten image into the document kitten array
+    //                 return db.Item.findOneAndUpdate(
+    //                     { _id: req.params[i].id },
+    //                     { $push: { image: dbImage._id } },
+    //                     { new: true }
+    //                 );
+    //             })
+    //             .then(function(dbItem) {
+    //                 //send back the correct item with the new data in the image array
+    //                 res.json(dbItem);
 
-                })
-                .catch(function(err) {
-                    //If an error occurred, send back
-                    res.json(err);
-                });
-            }
-        }
-    });
+    //             })
+    //             .catch(function(err) {
+    //                 //If an error occurred, send back
+    //                 res.json(err);
+    //             });
+    //         }
+    //     }
+    // });
 
     //This route gets one item document from item collection
     router.get("/getAItem/:id", function(req, res) {
