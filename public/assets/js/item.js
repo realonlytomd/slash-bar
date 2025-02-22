@@ -629,10 +629,11 @@ jQuery(document).ready(function( $ ){
             clickOnImg = true;
         }
     });
-
+    //
     // If User clicks the Delete this Image button on an additional Large Image, this function happens
     // the image is deleted, and it's associated Title and Description are removed,
     // along with the id number in the item db
+    // Provided by Gemini, adds the return the promise noted below
     $(document).on("click", "#deleteImage", function(event) {
         event.preventDefault();
         console.log("A user clicked the delete image button!");
@@ -642,25 +643,57 @@ jQuery(document).ready(function( $ ){
         currentItemId = thisItemId;
         console.log("in deleteImage function, currentImageId: ", currentImageId);
         console.log("in deleteImage function, currentItemId: ", currentItemId);
-        // DELETE this specific image from the Image collection
+    
         $.ajax({
             method: "DELETE",
             url: "/image/delete/" + currentImageId
         })
-        .then (function(dbImage) {
-            console.log("dbImage after delete: ", dbImage); // shows a successful delete of 1 document
-            // and then delete (or "pull") the reference to that just deleted document from the item document
-            $.ajax({
+        .then(function(dbImage) {
+            console.log("dbImage after delete: ", dbImage);
+            return $.ajax({ // Return the promise for chaining, my note: I think this is the only change
                 method: "POST",
-                url: "/item/removeRef/" + currentItemId, //needs to be current item id
-                data: {imageId: currentImageId}
-            })
-            .then (function(dbItem){
-              console.log("dbItem after POST /item/removeRef/id: ", dbItem);
-                getAllData();
+                url: "/item/removeRef/" + currentItemId,
+                data: { imageId: currentImageId }
             });
+        })
+        .then(function(dbItem) {
+            console.log("dbItem after POST /item/removeRef/id: ", dbItem);
+            getAllData();
+        })
+        .catch(function(err) {
+            console.error("Error deleting image or reference:", err);
+            // Display an error message to the user
         });
     });
+    //My original code:
+    // $(document).on("click", "#deleteImage", function(event) {
+    //     event.preventDefault();
+    //     console.log("A user clicked the delete image button!");
+    //     var thisImageId = $(this).data("id");
+    //     currentImageId = thisImageId;
+    //     var thisItemId = $(this).data("itemid");
+    //     currentItemId = thisItemId;
+    //     console.log("in deleteImage function, currentImageId: ", currentImageId);
+    //     console.log("in deleteImage function, currentItemId: ", currentItemId);
+    //     // DELETE this specific image from the Image collection
+    //     $.ajax({
+    //         method: "DELETE",
+    //         url: "/image/delete/" + currentImageId
+    //     })
+    //     .then (function(dbImage) {
+    //         console.log("dbImage after delete: ", dbImage); // shows a successful delete of 1 document
+    //         // and then delete (or "pull") the reference to that just deleted document from the item document
+    //         $.ajax({
+    //             method: "POST",
+    //             url: "/item/removeRef/" + currentItemId, //needs to be current item id
+    //             data: {imageId: currentImageId}
+    //         })
+    //         .then (function(dbItem){
+    //           console.log("dbItem after POST /item/removeRef/id: ", dbItem);
+    //             getAllData();
+    //         });
+    //     });
+    // });
 
     // Function to delete an entire item
     // Clicking the item id, bio, and all images references. Images out of the Image db will be removed first
@@ -783,7 +816,7 @@ jQuery(document).ready(function( $ ){
         });
 
     // this function is after User clicks the add main image button. A modal appears for him to
-    // enter the title, description and browse for an image,
+    //  browse for an image,
     // but first the individual item must be found and populated to accept an array of images
     $(document).on("click", "#createImageItem", function(event) {
         event.preventDefault();
@@ -804,7 +837,8 @@ jQuery(document).ready(function( $ ){
         }
     });
     //
-    //
+    // this function enters the item image into the correct item in the db after data entered into the modal
+    //assisted by Gemini
     $(document).on("click", "#submitNewItemImage", function(event) {
         event.preventDefault();
 

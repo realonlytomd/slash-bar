@@ -4,6 +4,7 @@
 // moved from server.js file
 //
 var express = require("express");
+var fs = require('fs');
 var router = express.Router();
 var db = require("../models");
 // just the image Schema
@@ -13,6 +14,10 @@ var db = require("../models");
 
 // var reorder = require("array-rearrange");
 var path = require("path");
+// added with the suggestion of gemini
+const util = require('util');
+console.log(fs);
+const unlinkAsync = util.promisify(fs.unlink);
 
 //following is more from images upload to mongodb process - step 5
 //set up multer for storing uploaded files  -- not being used currently, code in server.js
@@ -28,7 +33,6 @@ var storage = multer.diskStorage({
 });
 var upload = multer({ storage: storage });
 //and from Step 1 of uploading images to mongodb:
-var fs = require('fs');
 
 // initialize image variables
 var imgHold = [];
@@ -87,8 +91,8 @@ module.exports = function(router) {
             });
     });
 
+    // Uploading images
     // This is from Gemini
-    //
     router.post("/createImageItem/:id", upload.array("itemImageInput[]", 20), function(req, res, next) {
         console.log("req.files: ", req.files);
     
@@ -98,13 +102,15 @@ module.exports = function(router) {
     
         const promises = req.files.map(file => { // Use map to create an array of promises
             return new Promise((resolve, reject) => { // Use a Promise for each file
+                console.log("file.filename: ", file.filename);
                 const image = {
                     title: "Title", // Or get from req.body if needed
                     desc: "Description", // Or get from req.body if needed
                     img: {
                         data: fs.readFileSync(path.join(__dirname + "/../uploads/" + file.filename)),
                         contentType: file.mimetype || "image/jpeg" // Get mimetype from file or default
-                    }
+                    },
+                    filename: file.filename // Crucial: Store the filename here!
                 };
     
                 db.Image.create(image)
@@ -362,23 +368,71 @@ module.exports = function(router) {
             });
     });
 
-    // This route deletes the image Mark wants to delete
-    router.delete("/image/delete/:id", function(req, res) {
+    // This is the route to delete an image the User wants to delete
+    // Helped out by Gemini
+    router.delete("/image/delete/:id", async (req, res) => {
         console.log("in image/delete, req.params.id: ", req.params.id);
-        // delete the whole metric group
-        db.Image.deleteOne(
-            { _id: req.params.id }
-        )
-        .then(function(dbImage) {
-            //  
+        try {
+            // 1. Find the image to get the filename
+            const image = await db.Image.findById(req.params.id);
+
+            if (!image) {
+                return res.status(404).json({ message: "Image not found" });
+            }
+            const filename = image.filename; // Get the filename
+            console.log("filename: ", filename);
+            // 2. Delete the image from the database
+            const dbImage = await db.Image.deleteOne({ _id: req.params.id });
             console.log("delete an image, dbImage: ", dbImage);
-            res.json(dbImage);
-        })
-        .catch(function(err) {
-            // but if an error occurred, send it to the client
-            res.json(err);
-        });
+            // 3. Delete the file from the uploads folder
+            if (filename) { // Check if filename exists
+                const filePath = path.join(__dirname, "/../uploads/", filename);
+                console.log("File path to delete:", filePath); // Add this line
+                try { // new way from Gemini
+                    await unlinkAsync(filePath);
+                    console.log(`WHAT ABOUT THIS: File ${filename} deleted successfully.`);
+                } catch (err) {
+                    console.error("Error deleting file:", err);
+                }
+            }
+            //
+            // if (filename) { // Check if filename exists
+            //     const filePath = path.join(__dirname, "/../uploads/", filename);
+            //     console.log("File path to delete:", filePath); // Add this line
+            //     fs.unlink(filePath, (err) => {
+            //         if (err) {
+            //             console.error("Error deleting file:", err);
+            //             // Optionally log, but don't stop the response
+            //         } else {
+            //             console.log(`WHAT ABOUT THIS: File ${filename} deleted successfully.`);
+            //         }
+            //     });
+            // }
+            //
+            res.json(dbImage); // Send the database response
+        } catch (err) {
+            console.error("Error deleting image:", err);
+            res.status(500).json(err); // Send a 500 error
+        }
     });
+
+    // This route deletes the image the User wants to delete
+    // router.delete("/image/delete/:id", function(req, res) {
+    //     console.log("in image/delete, req.params.id: ", req.params.id);
+    //     // delete the whole metric group
+    //     db.Image.deleteOne(
+    //         { _id: req.params.id }
+    //     )
+    //     .then(function(dbImage) {
+    //         //  
+    //         console.log("delete an image, dbImage: ", dbImage);
+    //         res.json(dbImage);
+    //     })
+    //     .catch(function(err) {
+    //         // but if an error occurred, send it to the client
+    //         res.json(err);
+    //     });
+    // });
 
     // This route deletes the reference to the image document in the associated item document
     router.post("/item/removeRef/:id", function(req, res) {
@@ -389,7 +443,7 @@ module.exports = function(router) {
     // delete (or pull) the id of the image and pass the req.body to the entry
     db.Item.findOneAndUpdate(
         { _id: req.params.id },
-        { $pull: { image: req.body.imageId }}, // this imageid should be the image's id to be removed
+        { $pull: { image: req.body.imageId }}, // this imageId should be the image's id to be removed
         { new: true }
     )
         .then(function(dbItem) {

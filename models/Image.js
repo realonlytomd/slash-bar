@@ -12,7 +12,8 @@ var ImageSchema = new Schema({
     {
         data: Buffer,
         contentType: String
-    }
+    },
+    filename: String
 }, {
     // adding timestamps: created at and updated at
     timestamps: true
