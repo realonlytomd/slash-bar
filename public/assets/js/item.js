@@ -807,6 +807,12 @@ jQuery(document).ready(function( $ ){
     //
     $(document).on("click", "#submitNewItemImage", function(event) {
         event.preventDefault();
+
+        function logFormDataEntries(formData) {
+            for (const pair of formData.entries()) {
+              console.log("key: ", pair[0] + ", value: ", pair[1]); // key, value
+            }
+        }
     
         const formData = new FormData();
     
@@ -815,6 +821,8 @@ jQuery(document).ready(function( $ ){
                 formData.append('itemImageInput[]', file); // Corrected line
             });
         });
+        
+        logFormDataEntries(formData);
     
         $.ajax({
             type: "POST",
