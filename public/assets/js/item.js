@@ -69,19 +69,19 @@ jQuery(document).ready(function( $ ){
           const itemWaiting = document.getElementById("itemWaiting");
       
           if (personLoggedIn) {
-            logoutButton.style.display = "block";
-            createItemButton.style.display = "block";
+            logoutButton.style.display = "inline-block";
+            createItemButton.style.display = "inline-block";
             currentItems.style.display = "block";
           } else {
             logoutButton.style.display = "none";
             createItemButton.style.display = "none";
-            currentItems.style.display = "none";
+            //currentItems.style.display = "none";
           }
       
           document.getElementById("revealItems")?.remove();
-          itemWaiting.style.display = "block";
+          itemWaiting.style.display = "inline-block";
           currentItems.innerHTML = "";
-          document.getElementById("itemHeader").style.display = "none";
+          //document.getElementById("itemHeader").style.display = "none";
           document.getElementById("editItemName").style.display = "none";
           document.getElementById("specificItem").innerHTML = "";
           document.getElementById("additionalImages").innerHTML = "";
