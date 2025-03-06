@@ -40,7 +40,7 @@ jQuery(document).ready(function( $ ){
     });
 
     // Need to add the inital load code that shows the user the item's currently in the db.
-    getAllData();
+    fetchAndDisplayItems();
     //Code to get all the items in the db listed 
     // then go through each item, and create in the currentItems div a name and 1st image of that item.
     // Make that pic clickable to bring up other biography and other pictures down below.
@@ -59,103 +59,202 @@ jQuery(document).ready(function( $ ){
         // $("#powerOnGoes").append(power);
         revealItems();
     }
+    //
+    // Here is the code to combine getAllData and revealItems into more efficient code. By gemini
+    async function fetchAndDisplayItems() {
+        try {
+          const logoutButton = document.getElementById("logoutButton");
+          const createItemButton = document.querySelector("button#createItem");
+          const currentItems = document.getElementById("currentItems");
+          const itemWaiting = document.getElementById("itemWaiting");
+      
+          if (personLoggedIn) {
+            logoutButton.style.display = "block";
+            createItemButton.style.display = "block";
+            currentItems.style.display = "block";
+          } else {
+            logoutButton.style.display = "none";
+            createItemButton.style.display = "none";
+            currentItems.style.display = "none";
+          }
+      
+          document.getElementById("revealItems")?.remove();
+          itemWaiting.style.display = "block";
+          currentItems.innerHTML = "";
+          document.getElementById("itemHeader").style.display = "none";
+          document.getElementById("editItemName").style.display = "none";
+          document.getElementById("specificItem").innerHTML = "";
+          document.getElementById("additionalImages").innerHTML = "";
+          document.getElementById("additionalImages").style.backgroundColor = "transparent";
+          document.getElementById("largeAddtlImages").innerHTML = "";
+          document.getElementById("mainImageButtonSpace").innerHTML = "";
 
-    function getAllData() {
-        //empty out the current divs
-        $("#logoutButton").hide();
-        $("button#createItem").hide();
-        $("#revealItems").remove(); //this is supposed to delete the element, not just hide it?
-        $("#itemWaiting").show();
-        $("#currentItems").empty();
-        $("#currentItems").hide();
-        $("#itemHeader").hide();
-        $("#editItemName").hide();
-        $("#specificItem").empty();
-        $("#additionalImages").empty();
-        $("#additionalImages").css("background-color", "transparent");
-        $("#largeAddtlImages").empty();
-        $("#mainImageButtonSpace").empty();  // remove the button - it should only appear when User creates a new item
-        $("#noImageYet").hide();
-        console.log("personLoggedIn: " + personLoggedIn);
-        if (personLoggedIn === true) {
-            $("#logoutButton").show();
-            $("button#createItem").show();
-            $("#currentItems").show();
+          const noImageYetElement = document.getElementById("noImageYet");
+          if (noImageYetElement) {
+                noImageYetElement.style.display = "none";
+          }
+          
+      
+          console.log("personLoggedIn: " + personLoggedIn);
+      
+          const response = await fetch("/getAllItems");
+          const items = await response.json();
+          console.log("items array, from fetchAndDisplayItems function", items);
+          console.log("items.length: ", items.length);
+          
+          // removing this because the new Gemini code should correct for no items.
+        //   if (items.length === 0) {
+        //     console.log("waitOnPower is being called");
+        //     waitOnPower();
+        //     itemWaiting.style.display = "none"; // Hide waiting message even if no items
+        //     return;
+        //   }
+      
+          const processedItems = await Promise.all(
+            items.map(async (item) => {
+              if (item.image && item.image[0]) {
+                const imageResponse = await fetch(`/getImages/${item.image[0]}`);
+                const dataGetImages = await imageResponse.json();
+                return { ...item, imagesData: dataGetImages };
+              } else {
+                currentItems.innerHTML += `<div class='itemTitles'><h4>${item.name}</h4><br><h5 class='noImage' data-itemid="${item._id}" data-toggle='modal' data-target='#newItemImageModal'>No Image</h5></div>`;
+                return null;
+              }
+            })
+          );
+      
+          const filteredItems = processedItems.filter((item) => item !== null);
+          filteredItems.sort((a, b) => b.order - a.order);
+      
+          document.body.style.backgroundImage = 'url("/assets/pictures/fadeRanch.jpg")';
+          document.body.style.backgroundSize = 'cover';
+      
+          filteredItems.forEach((item) => {
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "itemTitles";
+            itemDiv.setAttribute("onclick", "location.href='#specificItem'");
+            itemDiv.setAttribute("target", "_self");
+            itemDiv.dataset.itemid = item._id;
+            itemDiv.dataset.name = item.name;
+            itemDiv.dataset.bio = item.bio;
+            itemDiv.dataset.order = item.order;
+            itemDiv.dataset.noofimages = item.image.length;
+      
+            const itemName = document.createElement("h4");
+            itemName.className = "lightText";
+            itemName.textContent = item.name;
+      
+            itemDiv.appendChild(itemName);
+            itemDiv.appendChild(document.createElement("br"));
+            itemDiv.innerHTML += item.imagesData[0];
+            currentItems.appendChild(itemDiv);
+          });
+      
+        } catch (error) {
+          console.error("Error fetching and displaying items:", error);
+        } finally {
+          itemWaiting.style.display = "none";
         }
-        // empty out items previously retrieved from the db, and overall arrays since page isn't reloaded to keep 
-        // whether User is logged in or not
-        items = [];
-        allItemIds = [];
-        allItemNameswithImages = [];
-        numberOfImages = [];
-        allItemBios = [];
-        allItemOrder = [];
-        allItemImageIds = [];
-        allImagesOfItems = [];
-        wrongOrderIds = [];
-
-        // set a time to wait to add the power on button
-        // setTimeout(waitOnPower, 8000);
-        
-        //get the list of items from the db
-        $.getJSON("/getAllItems", function(items) {
-            console.log("items array, from getAllData function", items);
-            console.log("items.length: ", items.length);
-            if (items.length === 0) {  //I put this here for when there aren't any items in db yet
-                console.log("waitOnPower is being called");
-                waitOnPower();
-            }
-            for (i=0; i<items.length; i++) {
-                allItemIds.push (items[i]._id);
-                allItemNameswithImages.push(items[i].name);
-                allItemBios.push(items[i].bio);
-                allItemOrder.push(items[i].order);
-                console.log("after just getting all items, allItemOrder: ", allItemOrder);
-                //this is a list of all the items without a main image
-                if (typeof items[i].image[0] === "undefined") { //need to remove the names without an image
-                    // The following should be written to the DOM ONLY when User is in edit mode
-                    $("#currentItems").append("<div class='itemTitles'><h4>" + items[i].name + 
-                    "</h4><br><h5 class='noImage' data-itemid=" + items[i]._id + " data-toggle='modal' data-target='#newItemImageModal'>No Image</h5></div>");
-                    //remove THIS item from allItemNameswithImages array
-                    allItemIds.pop();  //need to be sorted like allItemOrder
-                    allItemNameswithImages.pop(); //need to be sorted like allItemOrder
-                    allItemBios.pop(); //need to be sorted like allItemOrder
-                    allItemOrder.pop();
-                    //console.log("after .pop(), allItemNameswithImages: ", allItemNameswithImages);
-                    //need to reorder these 4 arrays to match
-                    //the correct order of items, and also the allItemImageIds array for the revealItem function below
-                } else {
-                    console.log("items[" + i + "].image[0]: " + items[i].image[0]);
-                    allItemImageIds.push(items[i].image[0]); // array of image ids from 1st item db, need to be sorted like allItemOrder
-                    //console.log("items[" + i + "].image.length: ", items[i].image.length);
-                    //make an array of the number of images for each item
-                    numberOfImages.push(items[i].image.length); //need to be sorted like allItemOrder
-                    $.ajax({
-                    method: "GET",
-                    url: "/getImages/" + items[i].image[0]
-                    })
-                    .then(function(dataGetImages) { // dataGetImages is formatted Images from api-routes.js
-                        //console.log("after getAllItems, then /getImages, the new dataGetImages: ", dataGetImages);
-                        allImagesOfItems.push(dataGetImages);
-                        const myArray = dataGetImages[0].split("data-id=", 6);
-                        const myDataId = myArray[1].split(" ", 1);
-                        //console.log("myDataId: ", myDataId);
-                        // this was to "flatten" the array to become just an array of strings instead of array of array
-                        wrongOrderIds.push.apply(wrongOrderIds, myDataId); //array of image ids from 2nd item db (differing order)
-                        //console.log("wrongOrderIds: ", wrongOrderIds);
-                        console.log("wrongOrderIds.length: ", wrongOrderIds.length);
-                        console.log("allItemNameswithImages.length: ", allItemNameswithImages.length);
-                        if (wrongOrderIds.length === allItemNameswithImages.length) {
-                            console.log("wrongOrder.length = allItemNameswithImages.length");
-                            //setTimeout(waitOnPower, 500);  //this adds a number of seconds to wait on the power button, not needed
-                            revealItems();
-                        }
-                    });
-                }
-            }
-            
-        });
     }
+    
+      // above is from Gemini
+        //below is my previous getAllData()
+    // function getAllData() {
+    //     //empty out the current divs
+    //     $("#logoutButton").hide();
+    //     $("button#createItem").hide();
+    //     $("#revealItems").remove(); //this is supposed to delete the element, not just hide it?
+    //     $("#itemWaiting").show();
+    //     $("#currentItems").empty();
+    //     $("#currentItems").hide();
+    //     $("#itemHeader").hide();
+    //     $("#editItemName").hide();
+    //     $("#specificItem").empty();
+    //     $("#additionalImages").empty();
+    //     $("#additionalImages").css("background-color", "transparent");
+    //     $("#largeAddtlImages").empty();
+    //     $("#mainImageButtonSpace").empty();  // remove the button - it should only appear when User creates a new item
+    //     $("#noImageYet").hide();
+    //     console.log("personLoggedIn: " + personLoggedIn);
+    //     if (personLoggedIn === true) {
+    //         $("#logoutButton").show();
+    //         $("button#createItem").show();
+    //         $("#currentItems").show();
+    //     }
+    //     // empty out items previously retrieved from the db, and overall arrays since page isn't reloaded to keep 
+    //     // whether User is logged in or not
+    //     items = [];
+    //     allItemIds = [];
+    //     allItemNameswithImages = [];
+    //     numberOfImages = [];
+    //     allItemBios = [];
+    //     allItemOrder = [];
+    //     allItemImageIds = [];
+    //     allImagesOfItems = [];
+    //     wrongOrderIds = [];
+
+    //     // set a time to wait to add the power on button
+    //     // setTimeout(waitOnPower, 8000);
+        
+    //     //get the list of items from the db
+    //     $.getJSON("/getAllItems", function(items) {
+    //         console.log("items array, from getAllData function", items);
+    //         console.log("items.length: ", items.length);
+    //         if (items.length === 0) {  //I put this here for when there aren't any items in db yet
+    //             console.log("waitOnPower is being called");
+    //             waitOnPower();
+    //         }
+    //         for (i=0; i<items.length; i++) {
+    //             allItemIds.push (items[i]._id);
+    //             allItemNameswithImages.push(items[i].name);
+    //             allItemBios.push(items[i].bio);
+    //             allItemOrder.push(items[i].order);
+    //             console.log("after just getting all items, allItemOrder: ", allItemOrder);
+    //             //this is a list of all the items without a main image
+    //             if (typeof items[i].image[0] === "undefined") { //need to remove the names without an image
+    //                 // The following should be written to the DOM ONLY when User is in edit mode
+    //                 $("#currentItems").append("<div class='itemTitles'><h4>" + items[i].name + 
+    //                 "</h4><br><h5 class='noImage' data-itemid=" + items[i]._id + " data-toggle='modal' data-target='#newItemImageModal'>No Image</h5></div>");
+    //                 //remove THIS item from allItemNameswithImages array
+    //                 allItemIds.pop();  //need to be sorted like allItemOrder
+    //                 allItemNameswithImages.pop(); //need to be sorted like allItemOrder
+    //                 allItemBios.pop(); //need to be sorted like allItemOrder
+    //                 allItemOrder.pop();
+    //                 //console.log("after .pop(), allItemNameswithImages: ", allItemNameswithImages);
+    //                 //need to reorder these 4 arrays to match
+    //                 //the correct order of items, and also the allItemImageIds array for the revealItem function below
+    //             } else {
+    //                 console.log("items[" + i + "].image[0]: " + items[i].image[0]);
+    //                 allItemImageIds.push(items[i].image[0]); // array of image ids from 1st item db, need to be sorted like allItemOrder
+    //                 //console.log("items[" + i + "].image.length: ", items[i].image.length);
+    //                 //make an array of the number of images for each item
+    //                 numberOfImages.push(items[i].image.length); //need to be sorted like allItemOrder
+    //                 $.ajax({
+    //                 method: "GET",
+    //                 url: "/getImages/" + items[i].image[0]
+    //                 })
+    //                 .then(function(dataGetImages) { // dataGetImages is formatted Images from api-routes.js
+    //                     //console.log("after getAllItems, then /getImages, the new dataGetImages: ", dataGetImages);
+    //                     allImagesOfItems.push(dataGetImages);
+    //                     const myArray = dataGetImages[0].split("data-id=", 6);
+    //                     const myDataId = myArray[1].split(" ", 1);
+    //                     //console.log("myDataId: ", myDataId);
+    //                     // this was to "flatten" the array to become just an array of strings instead of array of array
+    //                     wrongOrderIds.push.apply(wrongOrderIds, myDataId); //array of image ids from 2nd item db (differing order)
+    //                     //console.log("wrongOrderIds: ", wrongOrderIds);
+    //                     console.log("wrongOrderIds.length: ", wrongOrderIds.length);
+    //                     console.log("allItemNameswithImages.length: ", allItemNameswithImages.length);
+    //                     if (wrongOrderIds.length === allItemNameswithImages.length) {
+    //                         console.log("wrongOrder.length = allItemNameswithImages.length");
+    //                         //setTimeout(waitOnPower, 500);  //this adds a number of seconds to wait on the power button, not needed
+    //                         revealItems();
+    //                     }
+    //                 });
+    //             }
+    //         }
+            
+    //     });
+    // }
 
     //function for User to log in to see editable sections
     $(document).on("click", "#personname", function(event) {
@@ -190,144 +289,146 @@ jQuery(document).ready(function( $ ){
         event.preventDefault();
         window.location.replace("/");
     });
-
+    //
+    // below is the revealItems function that I'd used to sort and then show data.
+    // gemini put these processes up in the fetchAndDisplayData function, so commenting it out here.
     // function to show the items from the database, sorted to match names with images
     //$(document).on("click", "#revealItems", function(event) {
-    function revealItems() {
-        //event.preventDefault();
-        $("#itemWaiting").hide();
-        $("#currentItems").show();
-        $("#itemHeader").show();
-        $("#revealItems").remove();
-        $("#editItemName").hide();
-        $("#specificItem").empty();
-        $("#additionalImages").empty();
-        $("#additionalImages").css("background-color", "transparent");
-        $("#largeAddtlImages").empty();
-        itemIconArray = [];
-        if (personLoggedIn === false) {
-            $("#currentItems").empty(); // this empties out the items without images written to DOM from getAllData()
-        }
-        // change backgroud of body
-        $("body").css({
-            'background-image' : 'url("/assets/pictures/fadeRanch.jpg")',
-            'background-size' : 'cover'
-          });
-        //first sort to get the order of items to match User's preferred order        
-        // adding a sort numerically for allItemOrder, then sort the other 4 arrays the SAME WAY
-        // this means the wrongOrderId and allImagesOfItems arrays will be sorted to this new order
-        // down below in the function called by clicking #revealItems.
-        // remember, sort will get rid of original, so splice to keep copies of originals
-        sourceOneAllItemOrder = allItemOrder.slice(0);
-        sourceAllItemIds = allItemIds.slice(0);
-        sourceAllItemNameswithImages = allItemNameswithImages.slice(0);
-        sourceAllItemBios = allItemBios.slice(0);
-        sourceAllItemImageIds = allItemImageIds.slice(0);
-        sourceNumberOfImages = numberOfImages.slice(0);
+    // function revealItems() {
+    //     //event.preventDefault();
+    //     $("#itemWaiting").hide();
+    //     $("#currentItems").show();
+    //     $("#itemHeader").show();
+    //     $("#revealItems").remove();
+    //     $("#editItemName").hide();
+    //     $("#specificItem").empty();
+    //     $("#additionalImages").empty();
+    //     $("#additionalImages").css("background-color", "transparent");
+    //     $("#largeAddtlImages").empty();
+    //     itemIconArray = [];
+    //     if (personLoggedIn === false) {
+    //         $("#currentItems").empty(); // this empties out the items without images written to DOM from getAllData()
+    //     }
+    //     // change backgroud of body
+    //     $("body").css({
+    //         'background-image' : 'url("/assets/pictures/fadeRanch.jpg")',
+    //         'background-size' : 'cover'
+    //       });
+    //     //first sort to get the order of items to match User's preferred order        
+    //     // adding a sort numerically for allItemOrder, then sort the other 4 arrays the SAME WAY
+    //     // this means the wrongOrderId and allImagesOfItems arrays will be sorted to this new order
+    //     // down below in the function called by clicking #revealItems.
+    //     // remember, sort will get rid of original, so splice to keep copies of originals
+    //     sourceOneAllItemOrder = allItemOrder.slice(0);
+    //     sourceAllItemIds = allItemIds.slice(0);
+    //     sourceAllItemNameswithImages = allItemNameswithImages.slice(0);
+    //     sourceAllItemBios = allItemBios.slice(0);
+    //     sourceAllItemImageIds = allItemImageIds.slice(0);
+    //     sourceNumberOfImages = numberOfImages.slice(0);
 
-        //sort allItemOrder and record indices
-        var indices = [...allItemOrder.keys()].sort((a, b) => allItemOrder[b] - allItemOrder[a]);
-        // sort allItemImagesIds to match
-        [allItemOrder, allItemImageIds] = [allItemOrder, allItemImageIds].map(a => indices.map(i => a[i]));
+    //     //sort allItemOrder and record indices
+    //     var indices = [...allItemOrder.keys()].sort((a, b) => allItemOrder[b] - allItemOrder[a]);
+    //     // sort allItemImagesIds to match
+    //     [allItemOrder, allItemImageIds] = [allItemOrder, allItemImageIds].map(a => indices.map(i => a[i]));
 
-        //need the original allItemOrder for each sorting
-        var sourceTwoAllItemOrder = sourceOneAllItemOrder.slice(0);
-        var indices = [...sourceOneAllItemOrder.keys()].sort((a, b) => sourceOneAllItemOrder[b] - sourceOneAllItemOrder[a]);
-        [sourceOneAllItemOrder, allItemIds] = [sourceOneAllItemOrder, allItemIds].map(a => indices.map(i => a[i]));
+    //     //need the original allItemOrder for each sorting
+    //     var sourceTwoAllItemOrder = sourceOneAllItemOrder.slice(0);
+    //     var indices = [...sourceOneAllItemOrder.keys()].sort((a, b) => sourceOneAllItemOrder[b] - sourceOneAllItemOrder[a]);
+    //     [sourceOneAllItemOrder, allItemIds] = [sourceOneAllItemOrder, allItemIds].map(a => indices.map(i => a[i]));
 
-        var sourceThreeAllItemOrder = sourceTwoAllItemOrder.slice(0);
-        var indices = [...sourceTwoAllItemOrder.keys()].sort((a, b) => sourceTwoAllItemOrder[b] - sourceTwoAllItemOrder[a]);
-        [sourceTwoAllItemOrder, allItemNameswithImages] = [sourceTwoAllItemOrder, allItemNameswithImages].map(a => indices.map(i => a[i]));
+    //     var sourceThreeAllItemOrder = sourceTwoAllItemOrder.slice(0);
+    //     var indices = [...sourceTwoAllItemOrder.keys()].sort((a, b) => sourceTwoAllItemOrder[b] - sourceTwoAllItemOrder[a]);
+    //     [sourceTwoAllItemOrder, allItemNameswithImages] = [sourceTwoAllItemOrder, allItemNameswithImages].map(a => indices.map(i => a[i]));
 
-        var sourceFourAllItemOrder = sourceThreeAllItemOrder.slice(0);
-        var indices = [...sourceThreeAllItemOrder.keys()].sort((a, b) => sourceThreeAllItemOrder[b] - sourceThreeAllItemOrder[a]);
-        [sourceThreeAllItemOrder, allItemBios] = [sourceThreeAllItemOrder, allItemBios].map(a => indices.map(i => a[i]));
+    //     var sourceFourAllItemOrder = sourceThreeAllItemOrder.slice(0);
+    //     var indices = [...sourceThreeAllItemOrder.keys()].sort((a, b) => sourceThreeAllItemOrder[b] - sourceThreeAllItemOrder[a]);
+    //     [sourceThreeAllItemOrder, allItemBios] = [sourceThreeAllItemOrder, allItemBios].map(a => indices.map(i => a[i]));
 
-        var sourceFiveAllItemOrder = sourceFourAllItemOrder.slice(0);
-        var indices = [...sourceFourAllItemOrder.keys()].sort((a, b) => sourceFourAllItemOrder[b] - sourceFourAllItemOrder[a]);
-        [sourceFourAllItemOrder, numberOfImages] = [sourceFourAllItemOrder, numberOfImages].map(a => indices.map(i => a[i]));
+    //     var sourceFiveAllItemOrder = sourceFourAllItemOrder.slice(0);
+    //     var indices = [...sourceFourAllItemOrder.keys()].sort((a, b) => sourceFourAllItemOrder[b] - sourceFourAllItemOrder[a]);
+    //     [sourceFourAllItemOrder, numberOfImages] = [sourceFourAllItemOrder, numberOfImages].map(a => indices.map(i => a[i]));
 
-         //originals
-        console.log("Originals sourceFiveAllItemOrder: ", sourceFiveAllItemOrder);
-        console.log("Originals sourceAllItemImageIds: ", sourceAllItemImageIds);
-        console.log("Originals sourceAllItemIds: ", sourceAllItemIds);
-        console.log("Originals sourceAllItemNameswithImages: ", sourceAllItemNameswithImages);
-        console.log("Originals sourceAllItemBios: ", sourceAllItemBios);
-        console.log("Originals sourceNumberOfImages: ", sourceNumberOfImages);
-        //sorted
-        console.log("sorted allItemOrder: ", ...allItemOrder);
-        console.log("sorted allItemImageIds: ", ...allItemImageIds);
-        console.log("sorted allItemIds: ", ...allItemIds);
-        console.log("sorted allItemNameswithImages: ", ...allItemNameswithImages);
-        console.log("sorted allItemBios: ", ...allItemBios);
-        console.log("sorted numberOfImages: ", ...numberOfImages);
+    //      //originals
+    //     console.log("Originals sourceFiveAllItemOrder: ", sourceFiveAllItemOrder);
+    //     console.log("Originals sourceAllItemImageIds: ", sourceAllItemImageIds);
+    //     console.log("Originals sourceAllItemIds: ", sourceAllItemIds);
+    //     console.log("Originals sourceAllItemNameswithImages: ", sourceAllItemNameswithImages);
+    //     console.log("Originals sourceAllItemBios: ", sourceAllItemBios);
+    //     console.log("Originals sourceNumberOfImages: ", sourceNumberOfImages);
+    //     //sorted
+    //     console.log("sorted allItemOrder: ", ...allItemOrder);
+    //     console.log("sorted allItemImageIds: ", ...allItemImageIds);
+    //     console.log("sorted allItemIds: ", ...allItemIds);
+    //     console.log("sorted allItemNameswithImages: ", ...allItemNameswithImages);
+    //     console.log("sorted allItemBios: ", ...allItemBios);
+    //     console.log("sorted numberOfImages: ", ...numberOfImages);
 
 
-        //final sort to get names to match first item image
-        let mySrcArr;
-        let myNewNested;
-        let myNested = [allItemImageIds, wrongOrderIds, allImagesOfItems];
+    //     //final sort to get names to match first item image
+    //     let mySrcArr;
+    //     let myNewNested;
+    //     let myNested = [allItemImageIds, wrongOrderIds, allImagesOfItems];
 
-        myNewNested = myNested.map((myArr, myI) => {
-            if (myI === 0) {
-                return myArr;
-            } else if (myI === 1) { // the reference, this just needs to be done once!
-                    mySrcArr = myArr.slice(0); // take a copy of the second array
-                    myArr.sort((prev, next) => {
-                        return allItemImageIds.indexOf(prev) - allItemImageIds.indexOf(next);
-                    });
-            }
-                if (myI === 1) {
-                    return myArr;
-                }
-                return myArr.map((myItem, myI) => myArr[
-                    mySrcArr.indexOf(myNested[1][myI]) // return in the order of the reference
-                ]);
-        });
+    //     myNewNested = myNested.map((myArr, myI) => {
+    //         if (myI === 0) {
+    //             return myArr;
+    //         } else if (myI === 1) { // the reference, this just needs to be done once!
+    //                 mySrcArr = myArr.slice(0); // take a copy of the second array
+    //                 myArr.sort((prev, next) => {
+    //                     return allItemImageIds.indexOf(prev) - allItemImageIds.indexOf(next);
+    //                 });
+    //         }
+    //             if (myI === 1) {
+    //                 return myArr;
+    //             }
+    //             return myArr.map((myItem, myI) => myArr[
+    //                 mySrcArr.indexOf(myNested[1][myI]) // return in the order of the reference
+    //             ]);
+    //     });
         
-        console.log("myNewNested: ", myNewNested);
-        //console.log("myNewNested[2].length = " + myNewNested[2].length); //the third array (index 2) is the dataGetIMages 
-                // to here
-                // so, myNewNested 3rd array is the images of the items in the same order of the names of items
-        // for (let i=0; i<myNewNested[2].length; i++) {
-        //     $(`#currentItems`).append (`<div class="itemTitles" data-itemid="` + allItemIds[i] + 
-        //     `" data-name="` + allItemNameswithImages[i] + `" data-bio="` + allItemBios[i] + 
-        //     `" data-order="` + allItemOrder[i] + `" data-noofimages="` +  numberOfImages[i] + `"><h4>` + 
-        //     allItemNameswithImages[i] + `</h4><br>` + myNewNested[2][i] + `</div>`);
-        // }
-        //<a href="#about" target="_self">About</a>
-        console.log("myNewNested[2].length: " + myNewNested[2].length);
-        for (let i=0; i<myNewNested[2].length; i++) {
-            let itemIcon = $("<div>");
-            itemIcon.attr("onclick", "location.href='#specificItem'");
-            itemIcon.attr("target", "_self");
-            itemIcon.addClass("itemTitles");
-            itemIcon.data("itemid", allItemIds[i]);
-            itemIcon.data("name", allItemNameswithImages[i]);
-            itemIcon.data("bio", allItemBios[i]);
-            itemIcon.data("order", allItemOrder[i]);
-            itemIcon.data("noofimages", numberOfImages[i]);
-            let itemName = $("<h4>");
-            itemName.addClass("lightText");
-            itemName.text(allItemNameswithImages[i]);
-            itemIcon.append(itemName);
-            itemIcon.append("<br>");
-            // let hyperlink = $("<a>");
-            // hyperlink.attr("href", "#specificItem");
-            // hyperlink.attr("target", "_self");
-            // hyperlink.append(myNewNested[2][i])
-            itemIcon.append(myNewNested[2][i]);
-            itemIconArray.push(itemIcon);
-        }
+    //     console.log("myNewNested: ", myNewNested);
+    //     //console.log("myNewNested[2].length = " + myNewNested[2].length); //the third array (index 2) is the dataGetIMages 
+    //             // to here
+    //             // so, myNewNested 3rd array is the images of the items in the same order of the names of items
+    //     // for (let i=0; i<myNewNested[2].length; i++) {
+    //     //     $(`#currentItems`).append (`<div class="itemTitles" data-itemid="` + allItemIds[i] + 
+    //     //     `" data-name="` + allItemNameswithImages[i] + `" data-bio="` + allItemBios[i] + 
+    //     //     `" data-order="` + allItemOrder[i] + `" data-noofimages="` +  numberOfImages[i] + `"><h4>` + 
+    //     //     allItemNameswithImages[i] + `</h4><br>` + myNewNested[2][i] + `</div>`);
+    //     // }
+    //     //<a href="#about" target="_self">About</a>
+    //     console.log("myNewNested[2].length: " + myNewNested[2].length);
+    //     for (let i=0; i<myNewNested[2].length; i++) {
+    //         let itemIcon = $("<div>");
+    //         itemIcon.attr("onclick", "location.href='#specificItem'");
+    //         itemIcon.attr("target", "_self");
+    //         itemIcon.addClass("itemTitles");
+    //         itemIcon.data("itemid", allItemIds[i]);
+    //         itemIcon.data("name", allItemNameswithImages[i]);
+    //         itemIcon.data("bio", allItemBios[i]);
+    //         itemIcon.data("order", allItemOrder[i]);
+    //         itemIcon.data("noofimages", numberOfImages[i]);
+    //         let itemName = $("<h4>");
+    //         itemName.addClass("lightText");
+    //         itemName.text(allItemNameswithImages[i]);
+    //         itemIcon.append(itemName);
+    //         itemIcon.append("<br>");
+    //         // let hyperlink = $("<a>");
+    //         // hyperlink.attr("href", "#specificItem");
+    //         // hyperlink.attr("target", "_self");
+    //         // hyperlink.append(myNewNested[2][i])
+    //         itemIcon.append(myNewNested[2][i]);
+    //         itemIconArray.push(itemIcon);
+    //     }
 
-        console.log("itemIconArray.length: " + itemIconArray.length);
-        console.log("itemIconArray[0]: ", itemIconArray[0]);
+    //     console.log("itemIconArray.length: " + itemIconArray.length);
+    //     console.log("itemIconArray[0]: ", itemIconArray[0]);
         
-        for (let i=0; i<itemIconArray.length; i++) {
-            $(`#currentItems`).append(itemIconArray[i]);
-        }
-    //});
-    }
+    //     for (let i=0; i<itemIconArray.length; i++) {
+    //         $(`#currentItems`).append(itemIconArray[i]);
+    //     }
+    // //});
+    // }
     //clicking on the picture of one of the items displayed brings up a large pic and info about that item
     // adding the display of additional pictures
     
@@ -658,7 +759,7 @@ jQuery(document).ready(function( $ ){
         })
         .then(function(dbItem) {
             console.log("dbItem after POST /item/removeRef/id: ", dbItem);
-            getAllData();
+            fetchAndDisplayItems();
         })
         .catch(function(err) {
             console.error("Error deleting image or reference:", err);
@@ -741,7 +842,7 @@ jQuery(document).ready(function( $ ){
                 .then (function(dbItem) {
                     console.log("after delete the item, dbItem: ", dbItem);
                 });
-                getAllData();
+                fetchAndDisplayItems();
         });
     }
 
@@ -788,12 +889,12 @@ jQuery(document).ready(function( $ ){
         });
     });
 
-    // function to re-retrieve getAllData if no image is initially given to a new item, the No Image button is clicked by User
+    // function to re-retrieve fetchAndDisplayItems if no image is initially given to a new item, the No Image button is clicked by User
     $(document).on("click", "#noImageYet", function(event) {
         event.preventDefault();
         $("#mainImageButtonSpace").empty();  // remove the button - it should only appear when User creates a new item
         //window.location.replace("/");
-        getAllData();
+        fetchAndDisplayItems();
     });
 
      // this function is after User clicks the noimage label under a previously created item
@@ -870,7 +971,7 @@ jQuery(document).ready(function( $ ){
                 $("#mainImageButtonSpace").empty();
                 $("#newItemImageModal").modal("hide");
                 $("#imageDiv").empty();
-                getAllData(); // Or however you refresh the display
+                fetchAndDisplayItems(); // Or however you refresh the display
             },
             error: function(error) { // Add error handling
               console.error("Image upload error:", error);
@@ -1022,7 +1123,7 @@ jQuery(document).ready(function( $ ){
             // then hide the div to edit and this modal
             $("#editNameForm").modal("hide");
             //window.location.replace("/");
-            getAllData();
+            fetchAndDisplayItems();
         });
     });
 
@@ -1043,7 +1144,7 @@ jQuery(document).ready(function( $ ){
             // then hide the div to edit and this modal
             $("#editBioForm").modal("hide");
             //window.location.replace("/");
-            getAllData();
+            fetchAndDisplayItems();
         });
     });
 
@@ -1064,7 +1165,7 @@ jQuery(document).ready(function( $ ){
             // then hide the div to edit and this modal
             $("#editOrderForm").modal("hide");
             //window.location.replace("/");
-            getAllData();
+            fetchAndDisplayItems();
         });
     });
 
@@ -1086,7 +1187,7 @@ jQuery(document).ready(function( $ ){
             // then hide the div to edit and this modal
             $("#editTitleForm").modal("hide");
             //window.location.replace("/");
-            getAllData();
+            fetchAndDisplayItems();
         });
     });
 
@@ -1108,7 +1209,7 @@ jQuery(document).ready(function( $ ){
             // then hide the div to edit and this modal
             $("#editDescForm").modal("hide");
             //window.location.replace("/");
-            getAllData();
+            fetchAndDisplayItems();
         });
     });
 

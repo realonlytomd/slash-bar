@@ -16,7 +16,7 @@ var db = require("../models");
 var path = require("path");
 // added with the suggestion of gemini
 const util = require('util');
-console.log(fs);
+//console.log(fs);
 const unlinkAsync = util.promisify(fs.unlink);
 
 //following is more from images upload to mongodb process - step 5
@@ -39,19 +39,28 @@ var imgHold = [];
 var imagesHold = [];
 
 module.exports = function(router) {
-
+    // This is the better code supplied by gemini for the first route: /getAllItems
+    router.get("/getAllItems", async (req, res) => {
+        try {
+          const dbAllItems = await db.Item.find({}); //Or add projection here.
+          res.status(200).json(dbAllItems);
+        } catch (err) {
+          console.error("Error fetching items:", err); // Log the error
+          res.status(500).json({ error: "Failed to fetch items" }); // Send a 500 status and a message
+        }
+      });
     // route for getting all the items out of the db
-    router.get("/getAllItems", function(req, res) {
-        db.Item.find({})
-            .then(function(dbAllItems) {
-                //console.log("dbAllItems from /getAllItems; ", dbAllItems);
-                res.json(dbAllItems);
-            })
-            .catch(function(err) {
-                // or send the error
-                res.json(err);
-            });
-    });
+    // router.get("/getAllItems", function(req, res) {
+    //     db.Item.find({})
+    //         .then(function(dbAllItems) {
+    //             //console.log("dbAllItems from /getAllItems; ", dbAllItems);
+    //             res.json(dbAllItems);
+    //         })
+    //         .catch(function(err) {
+    //             // or send the error
+    //             res.json(err);
+    //         });
+    // });
   
     // Route for getting a specific Item by id, and then populate it with an array for Images
     router.get("/popItem/:id", function(req, res) {
